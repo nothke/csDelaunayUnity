@@ -102,32 +102,29 @@ namespace csDelaunay
         public float a, b, c;
 
         // The two Voronoi vertices that the edge connects (if one of them is null, the edge extends to infinity)
-        private Vertex leftVertex;
-        public Vertex LeftVertex { get { return leftVertex; } }
-
-        private Vertex rightVertex;
-        public Vertex RightVertex { get { return rightVertex; } }
+        public Vertex LeftVertex { get; private set; }
+        public Vertex RightVertex { get; private set; }
 
         public Vertex Vertex(bool leftRight)
         {
-            return leftRight == false ? leftVertex : rightVertex;
+            return leftRight == false ? LeftVertex : RightVertex;
         }
 
         public void SetVertex(bool leftRight, Vertex v)
         {
             if (leftRight == false)
             {
-                leftVertex = v;
+                LeftVertex = v;
             }
             else
             {
-                rightVertex = v;
+                RightVertex = v;
             }
         }
 
         public bool IsPartOfConvexHull()
         {
-            return leftVertex == null || rightVertex == null;
+            return LeftVertex == null || RightVertex == null;
         }
 
         public float SitesDistance()
@@ -157,14 +154,13 @@ namespace csDelaunay
 
         // Once clipVertices() is called, this Disctinary will hold two Points
         // representing the clipped coordinates of the left and the right ends...
-        private Vector2f[] clippedVertices;
-        public Vector2f[] ClippedEnds { get { return clippedVertices; } }
+        public Vector2f[] ClippedEnds { get; private set; }
 
         // Unless the entire Edge is outside the bounds.
         // In that case visible will be false:
         public bool Visible()
         {
-            return clippedVertices != null;
+            return ClippedEnds != null;
         }
 
         // The two input Sites for which this Edge is a bisector:
@@ -183,10 +179,10 @@ namespace csDelaunay
 
         public void Dispose()
         {
-            leftVertex = null;
-            rightVertex = null;
-            if (clippedVertices != null)
-                clippedVertices = null;
+            LeftVertex = null;
+            RightVertex = null;
+            if (ClippedEnds != null)
+                ClippedEnds = null;
 
             sites = null;
 
@@ -209,8 +205,8 @@ namespace csDelaunay
         public override string ToString()
         {
             return "Edge " + edgeIndex + "; sites " + sites[0] + ", " + sites[1] +
-                "; endVertices " + (leftVertex != null ? leftVertex.VertexIndex.ToString() : "null") + ", " +
-                    (rightVertex != null ? rightVertex.VertexIndex.ToString() : "null") + "::";
+                "; endVertices " + (LeftVertex != null ? LeftVertex.VertexIndex.ToString() : "null") + ", " +
+                    (RightVertex != null ? RightVertex.VertexIndex.ToString() : "null") + "::";
         }
 
         /*
@@ -230,13 +226,13 @@ namespace csDelaunay
 
             if (a == 1 && b >= 0)
             {
-                vertex0 = rightVertex;
-                vertex1 = leftVertex;
+                vertex0 = RightVertex;
+                vertex1 = LeftVertex;
             }
             else
             {
-                vertex0 = leftVertex;
-                vertex1 = rightVertex;
+                vertex0 = LeftVertex;
+                vertex1 = RightVertex;
             }
 
             if (a == 1)
@@ -342,16 +338,16 @@ namespace csDelaunay
                 }
             }
 
-            clippedVertices = new Vector2f[2]; // alloc
-            if (vertex0 == leftVertex)
+            ClippedEnds = new Vector2f[2]; // alloc
+            if (vertex0 == LeftVertex)
             {
-                clippedVertices[0] = new Vector2f(x0, y0);
-                clippedVertices[1] = new Vector2f(x1, y1);
+                ClippedEnds[0] = new Vector2f(x0, y0);
+                ClippedEnds[1] = new Vector2f(x1, y1);
             }
             else
             {
-                clippedVertices[1] = new Vector2f(x0, y0);
-                clippedVertices[0] = new Vector2f(x1, y1);
+                ClippedEnds[1] = new Vector2f(x0, y0);
+                ClippedEnds[0] = new Vector2f(x1, y1);
             }
         }
         #endregion

@@ -33,14 +33,12 @@ namespace csDelaunay
         #endregion
 
         #region Object
-        private Vector2f coord;
-        public Vector2f Coord { get { return coord; } set { coord = value; } }
 
-        public float x { get { return coord.x; } }
-        public float y { get { return coord.y; } }
+        public Vector2f Coord { get; set; }
 
-        private int vertexIndex;
-        public int VertexIndex { get { return vertexIndex; } }
+        public float x { get { return Coord.x; } }
+        public float y { get { return Coord.y; } }
+        public int VertexIndex { get; private set; }
 
         public Vertex(float x, float y)
         {
@@ -49,25 +47,25 @@ namespace csDelaunay
 
         private Vertex Init(float x, float y)
         {
-            coord = new Vector2f(x, y);
+            Coord = new Vector2f(x, y);
 
             return this;
         }
 
         public void Dispose()
         {
-            coord = Vector2f.zero;
+            Coord = Vector2f.zero;
             pool.Enqueue(this);
         }
 
         public void SetIndex()
         {
-            vertexIndex = nVertices++;
+            VertexIndex = nVertices++;
         }
 
         public override string ToString()
         {
-            return "Vertex (" + vertexIndex + ")";
+            return "Vertex (" + VertexIndex + ")";
         }
 
         /*
@@ -123,7 +121,7 @@ namespace csDelaunay
                 return null;
             }
 
-            return Vertex.Create(intersectionX, intersectionY);
+            return Create(intersectionX, intersectionY);
         }
         #endregion
     }
