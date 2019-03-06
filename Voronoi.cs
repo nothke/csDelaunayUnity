@@ -12,16 +12,9 @@ namespace csDelaunay
         private SiteList sites;
         private List<Triangle> triangles;
 
-        private List<Edge> edges;
-        public List<Edge> Edges { get { return edges; } }
-
-        // TODO generalize this so it doesn't have to be a rectangle;
-        // then we can make the fractal voronois-within-voronois
-        private Rectf plotBounds;
-        public Rectf PlotBounds { get { return plotBounds; } }
-
-        private Dictionary<Vector2f, Site> sitesIndexedByLocation;
-        public Dictionary<Vector2f, Site> SitesIndexedByLocation { get { return sitesIndexedByLocation; } }
+        public List<Edge> Edges { get; private set; }
+        public Rectf PlotBounds { get; private set; }
+        public Dictionary<Vector2f, Site> SitesIndexedByLocation { get; private set; }
 
         private Random weigthDistributor;
 
@@ -36,14 +29,14 @@ namespace csDelaunay
             }
             triangles.Clear();
 
-            foreach (Edge e in edges)
+            foreach (Edge e in Edges)
             {
                 e.Dispose();
             }
-            edges.Clear();
+            Edges.Clear();
 
-            plotBounds = Rectf.zero;
-            sitesIndexedByLocation.Clear();
+            PlotBounds = Rectf.zero;
+            SitesIndexedByLocation.Clear();
             //sitesIndexedByLocation = null;
         }
 
@@ -65,10 +58,13 @@ namespace csDelaunay
         private void Init(List<Vector2f> points, Rectf plotBounds)
         {
             Profiler.BeginSample("Create sites and dict");
+
             if (sites == null)
                 sites = new SiteList();
+
             if (SitesIndexedByLocation == null)
-                sitesIndexedByLocation = new Dictionary<Vector2f, Site>();
+                SitesIndexedByLocation = new Dictionary<Vector2f, Site>(points.Count);
+
             Profiler.EndSample();
 
             Profiler.BeginSample("Add points to sites");
@@ -79,15 +75,15 @@ namespace csDelaunay
                 float weigth = (float)weigthDistributor.NextDouble() * 100;
                 Site site = Site.Create(p, i, weigth);
                 sites.Add(site);
-                sitesIndexedByLocation[p] = site;
+                SitesIndexedByLocation[p] = site;
             }
             Profiler.EndSample();
 
-            this.plotBounds = plotBounds;
+            this.PlotBounds = plotBounds;
 
             Profiler.BeginSample("Create edges and triangles");
             if (triangles == null) triangles = new List<Triangle>();
-            if (edges == null) edges = new List<Edge>();
+            if (Edges == null) Edges = new List<Edge>();
             Profiler.EndSample();
 
             FortunesAlgorithm();
@@ -96,9 +92,9 @@ namespace csDelaunay
         public List<Vector2f> Region(Vector2f p)
         {
             Site site;
-            if (sitesIndexedByLocation.TryGetValue(p, out site))
+            if (SitesIndexedByLocation.TryGetValue(p, out site))
             {
-                return site.Region(plotBounds);
+                return site.Region(PlotBounds);
             }
             else
             {
@@ -110,7 +106,7 @@ namespace csDelaunay
         {
             List<Vector2f> points = new List<Vector2f>();
             Site site;
-            if (sitesIndexedByLocation.TryGetValue(coord, out site))
+            if (SitesIndexedByLocation.TryGetValue(coord, out site))
             {
                 List<Site> sites = site.NeighborSites();
                 foreach (Site neighbor in sites)
@@ -129,7 +125,7 @@ namespace csDelaunay
 
         public List<LineSegment> VoronoiBoundarayForSite(Vector2f coord)
         {
-            return LineSegment.VisibleLineSegments(Edge.SelectEdgesForSitePoint(coord, edges));
+            return LineSegment.VisibleLineSegments(Edge.SelectEdgesForSitePoint(coord, Edges));
         }
         /*
 		public List<LineSegment> DelaunayLinesForSite(Vector2f coord) {
@@ -138,7 +134,7 @@ namespace csDelaunay
 
         public List<LineSegment> VoronoiDiagram()
         {
-            return LineSegment.VisibleLineSegments(edges);
+            return LineSegment.VisibleLineSegments(Edges);
         }
         /*
 		public List<LineSegment> Hull() {
@@ -147,7 +143,7 @@ namespace csDelaunay
 
         public List<Edge> HullEdges()
         {
-            return edges.FindAll(edge => edge.IsPartOfConvexHull());
+            return Edges.FindAll(edge => edge.IsPartOfConvexHull());
         }
 
         public List<Vector2f> HullPointsInOrder()
@@ -177,7 +173,7 @@ namespace csDelaunay
 
         public List<List<Vector2f>> Regions()
         {
-            return sites.Regions(plotBounds);
+            return sites.Regions(PlotBounds);
         }
 
         public List<Vector2f> SiteCoords()
@@ -247,7 +243,7 @@ namespace csDelaunay
                     // Step 9
                     edge = Edge.CreateBisectingEdge(bottomSite, newSite);
                     //UnityEngine.Debug.Log("new edge: " + edge);
-                    edges.Add(edge);
+                    Edges.Add(edge);
 
                     bisector = Halfedge.Create(edge, false);
                     halfEdges.Add(bisector);
@@ -312,7 +308,7 @@ namespace csDelaunay
                         leftRight = true;
                     }
                     edge = Edge.CreateBisectingEdge(bottomSite, topSite);
-                    edges.Add(edge);
+                    Edges.Add(edge);
                     bisector = Halfedge.Create(edge, leftRight);
                     halfEdges.Add(bisector);
                     edgeList.Insert(llbnd, bisector);
@@ -352,9 +348,9 @@ namespace csDelaunay
             halfEdges.Clear();
 
             // we need the vertices to clip the edges
-            foreach (Edge e in edges)
+            foreach (Edge e in Edges)
             {
-                e.ClipVertices(plotBounds);
+                e.ClipVertices(PlotBounds);
             }
             // But we don't actually ever use them again!
             foreach (Vertex ve in vertices)
@@ -377,7 +373,7 @@ namespace csDelaunay
                 while (site != null)
                 {
                     // Loop all corners of the site to calculate the centroid
-                    List<Vector2f> region = site.Region(plotBounds);
+                    List<Vector2f> region = site.Region(PlotBounds);
                     if (region.Count < 1)
                     {
                         site = sites.Next();
@@ -423,7 +419,7 @@ namespace csDelaunay
 
                 // Between each replacement of the cendroid of the cell,
                 // we need to recompute Voronoi diagram:
-                Rectf origPlotBounds = this.plotBounds;
+                Rectf origPlotBounds = this.PlotBounds;
                 Dispose();
                 Init(newPoints, origPlotBounds);
             }
