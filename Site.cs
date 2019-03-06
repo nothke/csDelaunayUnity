@@ -251,8 +251,8 @@ namespace csDelaunay
             }
             edge = edges[i];
             bool orientation = edgeOrientations[i];
-            points.Add(edge.ClippedEnds[orientation]);
-            points.Add(edge.ClippedEnds[!orientation]);
+            points.Add(edge.ClippedEnds[orientation ? 1 : 0]);
+            points.Add(edge.ClippedEnds[!orientation ? 1 : 0]);
 
             for (int j = i + 1; j < n; j++)
             {
@@ -276,7 +276,7 @@ namespace csDelaunay
             bool newOrientation = edgeOrientations[j];
 
             // The point that must be conected to rightPoint:
-            Vector2f newPoint = newEdge.ClippedEnds[newOrientation];
+            Vector2f newPoint = newEdge.ClippedEnds[newOrientation ? 1 : 0];
 
             if (!CloseEnough(rightPoint, newPoint))
             {
@@ -420,7 +420,7 @@ namespace csDelaunay
                 }
                 points.Add(newPoint);
             }
-            Vector2f newRightPoint = newEdge.ClippedEnds[!newOrientation];
+            Vector2f newRightPoint = newEdge.ClippedEnds[!newOrientation ? 0 : 1];
             if (!CloseEnough(points[0], newRightPoint))
             {
                 points.Add(newRightPoint);

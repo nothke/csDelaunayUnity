@@ -15,8 +15,8 @@ namespace csDelaunay
             {
                 if (edge.Visible())
                 {
-                    Vector2f p1 = edge.ClippedEnds[false];
-                    Vector2f p2 = edge.ClippedEnds[true];
+                    Vector2f p1 = edge.ClippedEnds[0];
+                    Vector2f p2 = edge.ClippedEnds[1];
                     segments.Add(new LineSegment(p1, p2));
                 }
             }
