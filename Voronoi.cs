@@ -18,6 +18,18 @@ namespace csDelaunay
 
         private Random weigthDistributor;
 
+        public void Clear()
+        {
+            sites.Dispose();
+
+            triangles.Clear();
+
+            Edges.Clear();
+
+            SitesIndexedByLocation.Clear();
+        }
+
+        [Obsolete]
         public void Dispose()
         {
             sites.Dispose();
@@ -37,7 +49,7 @@ namespace csDelaunay
 
             PlotBounds = Rectf.zero;
             SitesIndexedByLocation.Clear();
-            //sitesIndexedByLocation = null;
+            SitesIndexedByLocation = null;
         }
 
         public Voronoi(List<Vector2f> points, Rectf plotBounds)
@@ -200,6 +212,7 @@ namespace csDelaunay
         {
             // vars
 
+            Profiler.BeginSample("Fortunes: initing");
             // holds coord and list of edges
             Site newSite, bottomSite, topSite, tempSite;
             // holds coord and index?
@@ -212,9 +225,11 @@ namespace csDelaunay
             Halfedge lbnd, rbnd, llbnd, rrbnd, bisector;
             // Edge is a point to point line
             Edge edge;
+            Profiler.EndSample();
+
 
             // Data bounds
-            Profiler.BeginSample("Getting data bounds");
+            Profiler.BeginSample("Fortunes: Getting data bounds");
             Rectf dataBounds = sites.GetSitesBounds();
             Profiler.EndSample();
 
@@ -435,7 +450,8 @@ namespace csDelaunay
                 // Between each replacement of the cendroid of the cell,
                 // we need to recompute Voronoi diagram:
                 Rectf origPlotBounds = this.PlotBounds;
-                Dispose();
+                //Dispose();
+                Clear();
                 Init(newPoints, origPlotBounds);
             }
         }
