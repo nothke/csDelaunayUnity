@@ -108,7 +108,7 @@ namespace csDelaunay
         private List<Edge> edges;
         public List<Edge> Edges { get { return edges; } }
         // which end of each edge hooks up with the previous edge in edges:
-        private List<LR> edgeOrientations;
+        private List<bool> edgeOrientations;
         // ordered list of points that define the region clipped to bounds:
         private List<Vector2f> region;
 
@@ -250,9 +250,9 @@ namespace csDelaunay
                 return new List<Vector2f>();
             }
             edge = edges[i];
-            LR orientation = edgeOrientations[i];
+            bool orientation = edgeOrientations[i];
             points.Add(edge.ClippedEnds[orientation]);
-            points.Add(edge.ClippedEnds[LR.Other(orientation)]);
+            points.Add(edge.ClippedEnds[!orientation]);
 
             for (int j = i + 1; j < n; j++)
             {
@@ -273,7 +273,7 @@ namespace csDelaunay
         {
             Vector2f rightPoint = points[points.Count - 1];
             Edge newEdge = edges[j];
-            LR newOrientation = edgeOrientations[j];
+            bool newOrientation = edgeOrientations[j];
 
             // The point that must be conected to rightPoint:
             Vector2f newPoint = newEdge.ClippedEnds[newOrientation];
@@ -420,7 +420,7 @@ namespace csDelaunay
                 }
                 points.Add(newPoint);
             }
-            Vector2f newRightPoint = newEdge.ClippedEnds[LR.Other(newOrientation)];
+            Vector2f newRightPoint = newEdge.ClippedEnds[!newOrientation];
             if (!CloseEnough(points[0], newRightPoint))
             {
                 points.Add(newRightPoint);

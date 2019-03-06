@@ -94,12 +94,12 @@ namespace csDelaunay {
 		private Vertex rightVertex;
 		public Vertex RightVertex {get{return rightVertex;}}
 
-		public Vertex Vertex(LR leftRight) {
-			return leftRight == LR.LEFT ? leftVertex : rightVertex;
+		public Vertex Vertex(bool leftRight) {
+			return leftRight == false ? leftVertex : rightVertex;
 		}
 
-		public void SetVertex(LR leftRight, Vertex v) {
-			if (leftRight == LR.LEFT) {
+		public void SetVertex(bool leftRight, Vertex v) {
+			if (leftRight == false) {
 				leftVertex = v;
 			} else {
 				rightVertex = v;
@@ -132,8 +132,8 @@ namespace csDelaunay {
 
 		// Once clipVertices() is called, this Disctinary will hold two Points
 		// representing the clipped coordinates of the left and the right ends...
-		private Dictionary<LR, Vector2f> clippedVertices;
-		public Dictionary<LR, Vector2f> ClippedEnds {get{return clippedVertices;}}
+		private Dictionary<bool, Vector2f> clippedVertices;
+		public Dictionary<bool, Vector2f> ClippedEnds {get{return clippedVertices;}}
 
 		// Unless the entire Edge is outside the bounds.
 		// In that case visible will be false:
@@ -142,11 +142,12 @@ namespace csDelaunay {
 		}
 
 		// The two input Sites for which this Edge is a bisector:
-		private Dictionary<LR, Site> sites;
-		public Site LeftSite {get{return sites[LR.LEFT];} set{sites[LR.LEFT]=value;}}
-		public Site RightSite {get{return sites[LR.RIGHT];} set{sites[LR.RIGHT]=value;}}
+        // Nothke: convert to array
+		private Dictionary<bool, Site> sites;
+		public Site LeftSite {get{return sites[false];} set{sites[false]=value;}}
+		public Site RightSite {get{return sites[true];} set{sites[true]=value;}}
 
-		public Site Site(LR leftRight) {
+		public Site Site(bool leftRight) {
 			return sites[leftRight];
 		}
 
@@ -172,13 +173,13 @@ namespace csDelaunay {
 		}
 
 		public Edge Init() {
-			sites = new Dictionary<LR, Site>();
+			sites = new Dictionary<bool, Site>();
 
 			return this;
 		}
 
 		public override string ToString() {
-			return "Edge " + edgeIndex + "; sites " + sites[LR.LEFT] + ", " + sites[LR.RIGHT] +
+			return "Edge " + edgeIndex + "; sites " + sites[false] + ", " + sites[true] +
 				"; endVertices " + (leftVertex != null ? leftVertex.VertexIndex.ToString() : "null") + ", " +
 					(rightVertex != null ? rightVertex.VertexIndex.ToString() : "null") + "::";
 		}
@@ -283,13 +284,13 @@ namespace csDelaunay {
 				}
 			}
 
-			clippedVertices = new Dictionary<LR, Vector2f>();
+			clippedVertices = new Dictionary<bool, Vector2f>();
 			if (vertex0 == leftVertex) {
-				clippedVertices[LR.LEFT] = new Vector2f(x0, y0);
-				clippedVertices[LR.RIGHT] = new Vector2f(x1, y1);
+				clippedVertices[false] = new Vector2f(x0, y0);
+				clippedVertices[true] = new Vector2f(x1, y1);
 			} else {
-				clippedVertices[LR.RIGHT] = new Vector2f(x0, y0);
-				clippedVertices[LR.LEFT] = new Vector2f(x1, y1);
+				clippedVertices[true] = new Vector2f(x0, y0);
+				clippedVertices[false] = new Vector2f(x1, y1);
 			}
 		}
 		#endregion

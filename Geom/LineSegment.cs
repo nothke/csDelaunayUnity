@@ -10,8 +10,8 @@ namespace csDelaunay {
 
 			foreach (Edge edge in edges) {
 				if (edge.Visible()) {
-					Vector2f p1 = edge.ClippedEnds[LR.LEFT];
-					Vector2f p2 = edge.ClippedEnds[LR.RIGHT];
+					Vector2f p1 = edge.ClippedEnds[false];
+					Vector2f p2 = edge.ClippedEnds[true];
 					segments.Add(new LineSegment(p1,p2));
 				}
 			}

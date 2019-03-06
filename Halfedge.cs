@@ -10,7 +10,7 @@ namespace csDelaunay
         #region Pool
         private static Queue<Halfedge> pool = new Queue<Halfedge>();
 
-        public static Halfedge Create(Edge edge, LR lr)
+        public static Halfedge Create(Edge edge, bool lr)
         {
             if (pool.Count > 0)
             {
@@ -23,7 +23,7 @@ namespace csDelaunay
         }
         public static Halfedge CreateDummy()
         {
-            return Create(null, null);
+            return Create(null, false);
         }
         #endregion
 
@@ -33,18 +33,18 @@ namespace csDelaunay
         public Halfedge nextInPriorityQueue;
 
         public Edge edge;
-        public LR leftRight;
+        public bool leftRight;
         public Vertex vertex;
 
         // The vertex's y-coordinate in the transformed Voronoi space V
         public float ystar;
 
-        public Halfedge(Edge edge, LR lr)
+        public Halfedge(Edge edge, bool lr)
         {
             Init(edge, lr);
         }
 
-        private Halfedge Init(Edge edge, LR lr)
+        private Halfedge Init(Edge edge, bool lr)
         {
             this.edge = edge;
             leftRight = lr;
@@ -72,7 +72,7 @@ namespace csDelaunay
                 return;
             }
             edge = null;
-            leftRight = null;
+            leftRight = false;
             vertex = null;
             pool.Enqueue(this);
         }
@@ -83,7 +83,7 @@ namespace csDelaunay
             edgeListRightNeighbor = null;
             nextInPriorityQueue = null;
             edge = null;
-            leftRight = null;
+            leftRight = false;
             vertex = null;
             pool.Enqueue(this);
         }
@@ -96,11 +96,11 @@ namespace csDelaunay
 
             topSite = edge.RightSite;
             rightOfSite = p.x > topSite.x;
-            if (rightOfSite && this.leftRight == LR.LEFT)
+            if (rightOfSite && this.leftRight == false)
             {
                 return true;
             }
-            if (!rightOfSite && this.leftRight == LR.RIGHT)
+            if (!rightOfSite && this.leftRight == true)
             {
                 return false;
             }
@@ -145,7 +145,7 @@ namespace csDelaunay
                 t3 = y1 - topSite.y;
                 above = t1 * t1 > t2 * t2 + t3 * t3;
             }
-            return this.leftRight == LR.LEFT ? above : !above;
+            return this.leftRight == false ? above : !above;
         }
         #endregion
     }

@@ -162,10 +162,10 @@ namespace csDelaunay
 
             EdgeReorderer reorderer = new EdgeReorderer(hullEdges, typeof(Site));
             hullEdges = reorderer.Edges;
-            List<LR> orientations = reorderer.EdgeOrientations;
+            List<bool> orientations = reorderer.EdgeOrientations;
             reorderer.Dispose();
 
-            LR orientation;
+            bool orientation;
             for (int i = 0; i < hullEdges.Count; i++)
             {
                 Edge edge = hullEdges[i];
@@ -196,7 +196,7 @@ namespace csDelaunay
             // ??
             Vector2f newIntStar = Vector2f.zero;
             // ??
-            LR leftRight;
+            bool leftRight;
             // half edge is the directed edge
             Halfedge lbnd, rbnd, llbnd, rrbnd, bisector;
             // Edge is a point to point line
@@ -249,7 +249,7 @@ namespace csDelaunay
                     //UnityEngine.Debug.Log("new edge: " + edge);
                     edges.Add(edge);
 
-                    bisector = Halfedge.Create(edge, LR.LEFT);
+                    bisector = Halfedge.Create(edge, false);
                     halfEdges.Add(bisector);
                     // Inserting two halfedges into edgelist constitutes Step 10:
                     // Insert bisector to the right of lbnd:
@@ -266,7 +266,7 @@ namespace csDelaunay
                     }
 
                     lbnd = bisector;
-                    bisector = Halfedge.Create(edge, LR.RIGHT);
+                    bisector = Halfedge.Create(edge, true);
                     halfEdges.Add(bisector);
                     // Second halfedge for Step 10::
                     // Insert bisector to the right of lbnd:
@@ -303,20 +303,20 @@ namespace csDelaunay
                     edgeList.Remove(lbnd);
                     heap.Remove(rbnd);
                     edgeList.Remove(rbnd);
-                    leftRight = LR.LEFT;
+                    leftRight = false;
                     if (bottomSite.y > topSite.y)
                     {
                         tempSite = bottomSite;
                         bottomSite = topSite;
                         topSite = tempSite;
-                        leftRight = LR.RIGHT;
+                        leftRight = true;
                     }
                     edge = Edge.CreateBisectingEdge(bottomSite, topSite);
                     edges.Add(edge);
                     bisector = Halfedge.Create(edge, leftRight);
                     halfEdges.Add(bisector);
                     edgeList.Insert(llbnd, bisector);
-                    edge.SetVertex(LR.Other(leftRight), v);
+                    edge.SetVertex(!leftRight, v);
                     if ((vertex = Vertex.Intersect(llbnd, bisector)) != null)
                     {
                         vertices.Add(vertex);
@@ -446,7 +446,7 @@ namespace csDelaunay
             {
                 return bottomMostSite;
             }
-            return edge.Site(LR.Other(he.leftRight));
+            return edge.Site(!he.leftRight);
         }
 
         public static int CompareByYThenX(Site s1, Site s2)

@@ -117,8 +117,8 @@ namespace csDelaunay
                 edge = edge1;
             }
             rightOfSite = intersectionX >= edge.RightSite.x;
-            if ((rightOfSite && halfedge.leftRight == LR.LEFT) ||
-                (!rightOfSite && halfedge.leftRight == LR.RIGHT))
+            if ((rightOfSite && halfedge.leftRight == false) ||
+                (!rightOfSite && halfedge.leftRight == true))
             {
                 return null;
             }

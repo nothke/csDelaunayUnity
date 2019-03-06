@@ -1,5 +1,5 @@
 ﻿namespace csDelaunay {
-	
+	/*
 	public class LR {
 
 		public static readonly LR LEFT = new LR("left");
@@ -18,5 +18,5 @@
 		public override string ToString() {
 			return name;
 		}
-	}
+	}*/
 }
