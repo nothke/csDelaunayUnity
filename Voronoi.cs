@@ -89,6 +89,9 @@ namespace csDelaunay
             FortunesAlgorithm();
         }
 
+        #region Unused Publics
+
+        /*
         public List<Vector2f> Region(Vector2f p)
         {
             Site site;
@@ -100,8 +103,9 @@ namespace csDelaunay
             {
                 return new List<Vector2f>();
             }
-        }
+        }*/
 
+        /*
         public List<Vector2f> NeighborSitesForSite(Vector2f coord)
         {
             List<Vector2f> points = new List<Vector2f>();
@@ -116,36 +120,43 @@ namespace csDelaunay
             }
 
             return points;
-        }
+        }*/
 
+        /*
         public List<Circle> Circles()
         {
             return sites.Circles();
-        }
+        }*/
 
+        /*
         public List<LineSegment> VoronoiBoundarayForSite(Vector2f coord)
         {
             return LineSegment.VisibleLineSegments(Edge.SelectEdgesForSitePoint(coord, Edges));
-        }
+        }*/
+
         /*
 		public List<LineSegment> DelaunayLinesForSite(Vector2f coord) {
 			return DelaunayLinesForEdges(Edge.SelectEdgesForSitePoint(coord, edges));
 		}*/
 
+        /*
         public List<LineSegment> VoronoiDiagram()
         {
             return LineSegment.VisibleLineSegments(Edges);
-        }
+        }*/
+
         /*
 		public List<LineSegment> Hull() {
 			return DelaunayLinesForEdges(HullEdges());
 		}*/
 
+        /*
         public List<Edge> HullEdges()
         {
             return Edges.FindAll(edge => edge.IsPartOfConvexHull());
-        }
+        }*/
 
+        /*
         public List<Vector2f> HullPointsInOrder()
         {
             List<Edge> hullEdges = HullEdges();
@@ -169,17 +180,21 @@ namespace csDelaunay
                 points.Add(edge.Site(orientation).Coord);
             }
             return points;
-        }
+        }*/
 
+        /*
         public List<List<Vector2f>> Regions()
         {
             return sites.Regions(PlotBounds);
-        }
+        }*/
 
+        /*
         public List<Vector2f> SiteCoords()
         {
             return sites.SiteCoords();
-        }
+        }*/
+
+        #endregion
 
         private void FortunesAlgorithm()
         {
