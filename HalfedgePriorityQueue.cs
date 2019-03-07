@@ -40,16 +40,24 @@ namespace csDelaunay
             // from Init()
             count = 0;
             minBucked = 0;
+
+            // Dummy Halfedge at the top of each hash
+            for (int i = 0; i < hashSize; i++)
+            {
+                hash[i] = Halfedge.CreateDummy();
+                hash[i].nextInPriorityQueue = null;
+            }
         }
 
         public void Dispose()
         {
+            UnityEngine.Debug.Log("Disposing heap");
             // Get rid of dummies
             for (int i = 0; i < hashSize; i++)
             {
                 hash[i].Dispose();
             }
-            hash = null;
+            //hash = null;
         }
 
         public void Init()

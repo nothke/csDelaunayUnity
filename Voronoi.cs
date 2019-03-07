@@ -268,16 +268,14 @@ namespace csDelaunay
             int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4); // WTF
 
             Profiler.BeginSample("Fortunes: Init heap");
-            heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
 
-            /*
             if (heap == null)
             {
-                //UnityEngine.Debug.Log("Creating NEW heap");
                 heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
             }
             else
-                heap.ReinitNoSizeChange(dataBounds.y, dataBounds.height);*/
+                heap.ReinitNoSizeChange(dataBounds.y, dataBounds.height);
+
             Profiler.EndSample();
 
             Profiler.BeginSample("Fortunes: Init EdgeList");

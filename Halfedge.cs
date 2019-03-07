@@ -8,13 +8,13 @@ namespace csDelaunay
     {
 
         #region Pool
-        private static Queue<Halfedge> pool = new Queue<Halfedge>();
+        private static Queue<Halfedge> unusedPool = new Queue<Halfedge>();
 
         public static Halfedge Create(Edge edge, bool lr)
         {
-            if (pool.Count > 0)
+            if (unusedPool.Count > 0)
             {
-                return pool.Dequeue().Init(edge, lr);
+                return unusedPool.Dequeue().Init(edge, lr);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace csDelaunay
             edge = null;
             leftRight = false;
             vertex = null;
-            pool.Enqueue(this);
+            unusedPool.Enqueue(this);
         }
 
         public void ReallyDispose()
@@ -85,7 +85,7 @@ namespace csDelaunay
             edge = null;
             leftRight = false;
             vertex = null;
-            pool.Enqueue(this);
+            unusedPool.Enqueue(this);
         }
 
         public bool IsLeftOf(Vector2f p)
