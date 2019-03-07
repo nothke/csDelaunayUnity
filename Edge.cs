@@ -163,19 +163,11 @@ namespace csDelaunay
             return -CompareSitesDistances_MAX(edge0, edge1);
         }
 
-        // Once clipVertices() is called, this Disctinary will hold two Points
+        // Once clipVertices() is called, this array will hold two Points
         // representing the clipped coordinates of the left and the right ends...
         public Vector2f[] ClippedEnds { get; private set; }
-
-        // Unless the entire Edge is outside the bounds.
-        // In that case visible will be false:
-        public bool Visible()
-        {
-            return Clipped;
-        }
-
+        
         // The two input Sites for which this Edge is a bisector:
-        // Nothke: convert to array
         private Site[] sites;
         public Site LeftSite { get { return sites[0]; } set { sites[0] = value; } }
         public Site RightSite { get { return sites[1]; } set { sites[1] = value; } }
@@ -363,11 +355,6 @@ namespace csDelaunay
                     x1 = (c - y1) / a;
                 }
             }
-
-            /*
-            Profiler.BeginSample("Clip alloc");
-            ClippedEnds = new Vector2f[2]; // alloc
-            Profiler.EndSample();*/
 
             Clipped = true;
 

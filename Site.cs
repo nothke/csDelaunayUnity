@@ -263,7 +263,7 @@ namespace csDelaunay
             int i = 0;
             Edge edge;
 
-            while (i < n && !edges[i].Visible())
+            while (i < n && !edges[i].Clipped)
             {
                 i++;
             }
@@ -281,7 +281,7 @@ namespace csDelaunay
             for (int j = i + 1; j < n; j++)
             {
                 edge = edges[j];
-                if (!edge.Visible())
+                if (!edge.Clipped)
                 {
                     continue;
                 }

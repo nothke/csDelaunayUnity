@@ -13,7 +13,7 @@ namespace csDelaunay
 
             foreach (Edge edge in edges)
             {
-                if (edge.Visible())
+                if (edge.Clipped)
                 {
                     Vector2f p1 = edge.ClippedEnds[0];
                     Vector2f p2 = edge.ClippedEnds[1];
