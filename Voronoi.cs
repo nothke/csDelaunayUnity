@@ -383,7 +383,9 @@ namespace csDelaunay
                 }
                 else if (heap.count > 0)
                 {
-                    
+                    Profiler.BeginSample("heap.ct>0");
+
+                    Profiler.BeginSample("pre");
                     // Intersection is smallest
                     lbnd = heap.ExtractMin();
                     llbnd = lbnd.edgeListLeftNeighbor;
@@ -405,6 +407,9 @@ namespace csDelaunay
                     heap.Remove(rbnd);
                     edgeList.Remove(rbnd);
                     leftRight = false;
+
+                    Profiler.EndSample();
+
                     if (bottomSite.y > topSite.y)
                     {
                         Profiler.BeginSample("Bottom-Top");
@@ -414,12 +419,27 @@ namespace csDelaunay
                         leftRight = true;
                         Profiler.EndSample();
                     }
+
                     edge = Edge.CreateBisectingEdge(bottomSite, topSite);
+
+                    Profiler.BeginSample("addedge");
                     Edges.Add(edge);
+                    Profiler.EndSample();
+
+                    Profiler.BeginSample("halfedge.create");
                     bisector = Halfedge.Create(edge, leftRight);
+                    Profiler.EndSample();
+
+                    Profiler.BeginSample("bisector");
                     halfEdges.Add(bisector);
+                    Profiler.EndSample();
+
+                    Profiler.BeginSample("insert bisector");
                     edgeList.Insert(llbnd, bisector);
+                    Profiler.EndSample();
+
                     edge.SetVertex(!leftRight, v);
+
                     if ((vertex = Vertex.Intersect(llbnd, bisector)) != null)
                     {
                         Profiler.BeginSample("llbnd, bisector");
@@ -439,7 +459,7 @@ namespace csDelaunay
                         heap.Insert(bisector);
                         Profiler.EndSample();
                     }
-                    
+                    Profiler.EndSample();
                 }
                 else
                 {

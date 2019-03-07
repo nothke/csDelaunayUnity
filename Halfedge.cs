@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 
 namespace csDelaunay
 {
@@ -10,6 +11,14 @@ namespace csDelaunay
         #region Pool
         private static Queue<Halfedge> unusedPool = new Queue<Halfedge>();
 
+        public static void PoolDummies(int num)
+        {
+            for (int i = 0; i < num; i++)
+            {
+                CreateDummy();
+            }
+        }
+
         public static Halfedge Create(Edge edge, bool lr)
         {
             if (unusedPool.Count > 0)
@@ -18,7 +27,10 @@ namespace csDelaunay
             }
             else
             {
-                return new Halfedge(edge, lr);
+                Profiler.BeginSample("Making new halfege");
+                Halfedge halfedge = new Halfedge(edge, lr);
+                Profiler.EndSample();
+                return halfedge;
             }
         }
         public static Halfedge CreateDummy()

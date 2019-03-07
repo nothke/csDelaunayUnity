@@ -100,7 +100,7 @@ namespace csDelaunay
             if (halfedge.vertex != null)
             {
                 previous = hash[removalBucket];
-                while (previous.nextInPriorityQueue != halfedge)
+                while (previous.nextInPriorityQueue != halfedge) // NRE!?!?
                 {
                     previous = previous.nextInPriorityQueue;
                 }
