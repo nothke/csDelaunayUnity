@@ -17,6 +17,8 @@ namespace csDelaunay
         private static Queue<Edge> pool = new Queue<Edge>();
         public bool disposed { get; private set; }
 
+        public bool Clipped { get; private set; }
+
         private static int nEdges = 0;
         /*
 		 * This is the only way to create a new Edge
@@ -169,7 +171,7 @@ namespace csDelaunay
         // In that case visible will be false:
         public bool Visible()
         {
-            return ClippedEnds != null;
+            return Clipped;
         }
 
         // The two input Sites for which this Edge is a bisector:
@@ -190,8 +192,9 @@ namespace csDelaunay
         {
             LeftVertex = null;
             RightVertex = null;
-            if (ClippedEnds != null)
-                ClippedEnds = null;
+
+            //if (ClippedEnds != null)
+            //    ClippedEnds = null;
 
             //sites = null; // was alloc?
 
@@ -216,6 +219,11 @@ namespace csDelaunay
                 sites[1] = null;
             }
             Profiler.EndSample();
+
+            if (ClippedEnds == null)
+                ClippedEnds = new Vector2f[2];
+
+            Clipped = false;
 
             return this;
         }
@@ -356,7 +364,13 @@ namespace csDelaunay
                 }
             }
 
+            /*
+            Profiler.BeginSample("Clip alloc");
             ClippedEnds = new Vector2f[2]; // alloc
+            Profiler.EndSample();*/
+
+            Clipped = true;
+
             if (vertex0 == LeftVertex)
             {
                 ClippedEnds[0] = new Vector2f(x0, y0);
