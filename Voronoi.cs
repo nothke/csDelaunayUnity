@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define TRIANGLES
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Profiling;
@@ -10,7 +12,9 @@ namespace csDelaunay
     {
 
         private List<Site> sites;
+#if TRIANGLES
         private List<Triangle> triangles;
+#endif
 
         public List<Edge> Edges { get; private set; }
         public Rectf PlotBounds { get; private set; }
@@ -22,7 +26,9 @@ namespace csDelaunay
         {
             sites.Clear();
 
+#if TRIANGLES
             triangles.Clear();
+#endif
 
             Edges.Clear();
 
@@ -35,11 +41,13 @@ namespace csDelaunay
             sites.Clear();
             sites = null;
 
+#if TRIANGLES
             foreach (Triangle t in triangles)
             {
                 t.Dispose();
             }
             triangles.Clear();
+#endif
 
             foreach (Edge e in Edges)
             {
@@ -94,7 +102,9 @@ namespace csDelaunay
             this.PlotBounds = plotBounds;
 
             Profiler.BeginSample("Create edges and triangles");
+#if TRIANGLES
             if (triangles == null) triangles = new List<Triangle>();
+#endif
             if (Edges == null) Edges = new List<Edge>();
             Profiler.EndSample();
 
@@ -321,7 +331,9 @@ namespace csDelaunay
                     topSite = RightRegion(rbnd, bottomMostSite);
                     // These three sites define a Delaunay triangle
                     // (not actually using these for anything...)
-                    // triangles.Add(new Triangle(bottomSite, topSite, RightRegion(lbnd, bottomMostSite)));
+#if TRIANGLES
+                    triangles.Add(new Triangle(bottomSite, topSite, RightRegion(lbnd, bottomMostSite)));
+#endif
 
                     v = lbnd.vertex;
                     v.SetIndex();
