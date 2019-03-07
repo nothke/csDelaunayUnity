@@ -12,6 +12,7 @@ namespace csDelaunay
 	 */
     public class Edge
     {
+        static List<Edge> all = new List<Edge>();
 
         #region Pool
         private static Queue<Edge> pool = new Queue<Edge>();
@@ -20,6 +21,20 @@ namespace csDelaunay
         public bool Clipped { get; private set; }
 
         private static int nEdges = 0;
+
+        public static void DisposeAll()
+        {
+            UnityEngine.Debug.Log(all.Count);
+            for (int i = 0; i < all.Count; i++)
+            {
+                if (!all[i].disposed)
+                {
+                    all[i].Dispose();
+                    UnityEngine.Debug.Log("Found undisposed Edge");
+                }
+            }
+        }
+
         /*
 		 * This is the only way to create a new Edge
 		 * @param site0
@@ -83,6 +98,7 @@ namespace csDelaunay
             else
             {
                 edge = new Edge();
+                all.Add(edge);
             }
 
             return edge;

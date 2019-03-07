@@ -251,7 +251,9 @@ namespace csDelaunay
         {
             Profiler.BeginSample("DAll HEs");
             Halfedge.DisposeAll();
+            Edge.DisposeAll();
             Profiler.EndSample();
+
             //UnityEngine.Debug.Log("HE pool: " + Halfedge.unusedPool.Count);
 
             currentSiteIndex = 0;
@@ -389,9 +391,6 @@ namespace csDelaunay
                 }
                 else if (heap.count > 0)
                 {
-                    Profiler.BeginSample("heap.ct>0");
-
-                    Profiler.BeginSample("pre");
                     // Intersection is smallest
                     lbnd = heap.ExtractMin();
                     llbnd = lbnd.edgeListLeftNeighbor;
@@ -414,16 +413,12 @@ namespace csDelaunay
                     edgeList.Remove(rbnd);
                     leftRight = false;
 
-                    Profiler.EndSample();
-
                     if (bottomSite.y > topSite.y)
                     {
-                        Profiler.BeginSample("Bottom-Top");
                         tempSite = bottomSite;
                         bottomSite = topSite;
                         topSite = tempSite;
                         leftRight = true;
-                        Profiler.EndSample();
                     }
 
                     edge = Edge.CreateBisectingEdge(bottomSite, topSite);
@@ -432,40 +427,29 @@ namespace csDelaunay
                     Edges.Add(edge);
                     Profiler.EndSample();
 
-                    Profiler.BeginSample("halfedge.create");
                     bisector = Halfedge.Create(edge, leftRight);
-                    Profiler.EndSample();
 
-                    Profiler.BeginSample("bisector");
                     halfEdges.Add(bisector);
-                    Profiler.EndSample();
 
-                    Profiler.BeginSample("insert bisector");
                     edgeList.Insert(llbnd, bisector);
-                    Profiler.EndSample();
 
                     edge.SetVertex(!leftRight, v);
 
                     if ((vertex = Vertex.Intersect(llbnd, bisector)) != null)
                     {
-                        Profiler.BeginSample("llbnd, bisector");
                         vertices.Add(vertex);
                         heap.Remove(llbnd);
                         llbnd.vertex = vertex;
                         llbnd.ystar = vertex.y + bottomSite.Dist(vertex);
                         heap.Insert(llbnd);
-                        Profiler.EndSample();
                     }
                     if ((vertex = Vertex.Intersect(bisector, rrbnd)) != null)
                     {
-                        Profiler.BeginSample("bisector, rrbnd");
                         vertices.Add(vertex);
                         bisector.vertex = vertex;
                         bisector.ystar = vertex.y + bottomSite.Dist(vertex);
                         heap.Insert(bisector);
-                        Profiler.EndSample();
                     }
-                    Profiler.EndSample();
                 }
                 else
                 {
