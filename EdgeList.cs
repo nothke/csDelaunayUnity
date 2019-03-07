@@ -48,6 +48,23 @@ namespace csDelaunay {
 			hash[hashSize - 1] = rightEnd;
 		}
 
+        public void ClearNoResize(float xmin, float deltaX)
+        {
+            this.xmin = xmin;
+            this.deltaX = deltaX;
+
+            // Two dummy Halfedges:
+            leftEnd = Halfedge.CreateDummy();
+            rightEnd = Halfedge.CreateDummy();
+
+            leftEnd.edgeListLeftNeighbor = null;
+            leftEnd.edgeListRightNeighbor = rightEnd;
+            rightEnd.edgeListLeftNeighbor = leftEnd;
+            rightEnd.edgeListRightNeighbor = null;
+            hash[0] = leftEnd;
+            hash[hashSize - 1] = rightEnd;
+        }
+
 		/*
 		 * Insert newHalfedge to the right of lb
 		 * @param lb

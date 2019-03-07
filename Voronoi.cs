@@ -25,13 +25,11 @@ namespace csDelaunay
         public void Clear()
         {
             sites.Clear();
-
 #if TRIANGLES
             triangles.Clear();
 #endif
-
             Edges.Clear();
-
+            PlotBounds = Rectf.zero;
             SitesIndexedByLocation.Clear();
         }
 
@@ -68,6 +66,12 @@ namespace csDelaunay
             Init(points, plotBounds);
         }
 
+        public void Redo(List<Vector2f> points, Rectf plotBounds)
+        {
+            Clear();
+            Init(points, plotBounds);
+        }
+
         public Voronoi(List<Vector2f> points, Rectf plotBounds, int lloydIterations)
         {
             weigthDistributor = new Random();
@@ -99,13 +103,14 @@ namespace csDelaunay
             }
             Profiler.EndSample();
 
-            this.PlotBounds = plotBounds;
+            PlotBounds = plotBounds;
 
             Profiler.BeginSample("Create edges and triangles");
 #if TRIANGLES
             if (triangles == null) triangles = new List<Triangle>();
 #endif
-            if (Edges == null) Edges = new List<Edge>();
+            if (Edges == null)
+                Edges = new List<Edge>();
             Profiler.EndSample();
 
             FortunesAlgorithm();
@@ -220,9 +225,16 @@ namespace csDelaunay
 
 
         int currentSiteIndex;
+        HalfedgePriorityQueue heap;
+
+        EdgeList edgeList;
+        List<Halfedge> halfEdges;
+        List<Vertex> vertices;
 
         private void FortunesAlgorithm()
         {
+            currentSiteIndex = 0;
+
             // vars
 
             Profiler.BeginSample("Fortunes: initing");
@@ -245,16 +257,51 @@ namespace csDelaunay
             Rectf dataBounds = SiteUtils.GetSitesBounds(sites);
             Profiler.EndSample();
 
-            int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4); // WTF
-            HalfedgePriorityQueue heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
 
-            EdgeList edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
-            List<Halfedge> halfEdges = new List<Halfedge>();
-            List<Vertex> vertices = new List<Vertex>();
+            int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4); // WTF
+
+            Profiler.BeginSample("Fortunes: Init heap");
+            heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
+
+            /*
+            if (heap == null)
+            {
+                //UnityEngine.Debug.Log("Creating NEW heap");
+                heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
+            }
+            else
+                heap.ReinitNoSizeChange(dataBounds.y, dataBounds.height);*/
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Fortunes: Init EdgeList");
+            /*
+            if (edgeList == null)
+            {
+                edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
+            }
+            else
+                edgeList.ClearNoResize(dataBounds.x, dataBounds.width);*/
+
+            edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Fortunes: Init HEs and vertices");
+            if (halfEdges == null) // TODO: Move to init
+            {
+                halfEdges = new List<Halfedge>();
+                vertices = new List<Vertex>();
+            }
+            else
+            {
+                halfEdges.Clear();
+                vertices.Clear();
+            }
+            Profiler.EndSample();
 
             Site bottomMostSite = GetNextSite();
             newSite = GetNextSite();
 
+            Profiler.BeginSample("Fortunes: Main Loop");
             while (true)
             {
                 if (!heap.Empty())
@@ -377,6 +424,7 @@ namespace csDelaunay
                     break;
                 }
             }
+            Profiler.EndSample();
 
             // DISPOSE
 
