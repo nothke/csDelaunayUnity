@@ -40,18 +40,6 @@ namespace csDelaunay
 
             return new Rectf(xmin, ymin, xmax - xmin, ymax - ymin);
         }
-
-        public static Site GetNext(List<Site> sites, ref int currentIndex)
-        {
-            if (currentIndex < sites.Count)
-            {
-                return sites[currentIndex++];
-            }
-            else
-            {
-                return null;
-            }
-        }
     }
 
 #if false

@@ -230,22 +230,20 @@ namespace csDelaunay
             Edge edge;
             Profiler.EndSample();
 
-
             // Data bounds
             Profiler.BeginSample("Fortunes: Getting data bounds");
             Rectf dataBounds = SiteUtils.GetSitesBounds(sites);
             Profiler.EndSample();
 
-            // WTF
-            int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4);
+            int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4); // WTF
             HalfedgePriorityQueue heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
 
             EdgeList edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
             List<Halfedge> halfEdges = new List<Halfedge>();
             List<Vertex> vertices = new List<Vertex>();
 
-            Site bottomMostSite = SiteUtils.GetNext(sites, ref currentSiteIndex); // sites.Next();
-            newSite = SiteUtils.GetNext(sites, ref currentSiteIndex);// sites.Next();
+            Site bottomMostSite = GetNextSite();
+            newSite = GetNextSite();
 
             while (true)
             {
@@ -310,7 +308,7 @@ namespace csDelaunay
                         heap.Insert(bisector);
                     }
 
-                    newSite = SiteUtils.GetNext(sites, ref currentSiteIndex);// sites.Next();
+                    newSite = GetNextSite();
                 }
                 else if (!heap.Empty())
                 {
@@ -401,7 +399,7 @@ namespace csDelaunay
                 List<Vector2f> newPoints = new List<Vector2f>();
                 // Go thourgh all sites
                 currentSiteIndex = 0; // sites.ResetListIndex();
-                Site site = SiteUtils.GetNext(sites, ref currentSiteIndex);// sites.Next();
+                Site site = GetNextSite();
 
                 while (site != null)
                 {
@@ -409,7 +407,7 @@ namespace csDelaunay
                     List<Vector2f> region = site.Region(PlotBounds);
                     if (region.Count < 1)
                     {
-                        site = SiteUtils.GetNext(sites, ref currentSiteIndex);
+                        site = GetNextSite();
                         continue;
                     }
 
@@ -447,7 +445,7 @@ namespace csDelaunay
                     centroid.y /= (6 * signedArea);
                     // Move site to the centroid of its Voronoi cell
                     newPoints.Add(centroid);
-                    site = SiteUtils.GetNext(sites, ref currentSiteIndex);
+                    site = GetNextSite();
                 }
 
                 // Between each replacement of the cendroid of the cell,
@@ -457,6 +455,14 @@ namespace csDelaunay
                 Clear();
                 Init(newPoints, origPlotBounds);
             }
+        }
+
+        private Site GetNextSite()
+        {
+            if (currentSiteIndex < sites.Count)
+                return sites[currentSiteIndex++];
+            else
+                return null;
         }
 
         private Site LeftRegion(Halfedge he, Site bottomMostSite)
