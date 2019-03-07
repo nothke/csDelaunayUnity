@@ -7,15 +7,35 @@ namespace csDelaunay
 
     public class Halfedge
     {
+        public static List<Halfedge> all = new List<Halfedge>();
 
         #region Pool
-        private static Queue<Halfedge> unusedPool = new Queue<Halfedge>();
+        public static Queue<Halfedge> unusedPool = new Queue<Halfedge>();
+        bool disposed;
 
         public static void PoolDummies(int num)
         {
+            var dummies = new Halfedge[num];
             for (int i = 0; i < num; i++)
             {
-                CreateDummy();
+                dummies[i] = CreateDummy();
+            }
+
+            for (int i = 0; i < num; i++)
+            {
+                dummies[i].Dispose();
+            }
+        }
+
+        public static void DisposeAll()
+        {
+            for (int i = 0; i < all.Count; i++)
+            {
+                if (!all[i].disposed)
+                {
+                    all[i].ReallyDispose();
+                    //UnityEngine.Debug.Log("Found undisposed HE");
+                }
             }
         }
 
@@ -29,6 +49,7 @@ namespace csDelaunay
             {
                 Profiler.BeginSample("Making new halfege");
                 Halfedge halfedge = new Halfedge(edge, lr);
+                all.Add(halfedge);
                 Profiler.EndSample();
                 return halfedge;
             }
@@ -63,6 +84,8 @@ namespace csDelaunay
             nextInPriorityQueue = null;
             vertex = null;
 
+            disposed = false;
+
             return this;
         }
 
@@ -87,6 +110,7 @@ namespace csDelaunay
             leftRight = false;
             vertex = null;
             unusedPool.Enqueue(this);
+            disposed = true;
         }
 
         public void ReallyDispose()
@@ -98,6 +122,7 @@ namespace csDelaunay
             leftRight = false;
             vertex = null;
             unusedPool.Enqueue(this);
+            disposed = true;
         }
 
         public bool IsLeftOf(Vector2f p)

@@ -73,6 +73,8 @@ namespace csDelaunay
 
         public Voronoi(List<Vector2f> points, Rectf plotBounds)
         {
+            Halfedge.PoolDummies(250);
+
             if (weigthDistributor == null)
                 weigthDistributor = new Random();
 
@@ -247,23 +249,28 @@ namespace csDelaunay
 
         private void FortunesAlgorithm()
         {
+            Profiler.BeginSample("DAll HEs");
+            Halfedge.DisposeAll();
+            Profiler.EndSample();
+            //UnityEngine.Debug.Log("HE pool: " + Halfedge.unusedPool.Count);
+
             currentSiteIndex = 0;
             nVertices = 0;
 
             // vars
 
             Profiler.BeginSample("Fortunes: initing");
-            // holds coord and list of edges
             Site newSite, bottomSite, topSite, tempSite;
-            // holds coord and index?
             Vertex v, vertex;
-            // ??
             Vector2f newIntStar = Vector2f.zero;
-            // ??
             bool leftRight;
-            // half edge is the directed edge
-            Halfedge lbnd, rbnd, llbnd, rrbnd, bisector;
-            // Edge is a point to point line
+
+            Halfedge lbnd = null;
+            Halfedge rbnd = null;
+            Halfedge llbnd = null;
+            Halfedge rrbnd = null;
+            Halfedge bisector = null;
+
             Edge edge;
             Profiler.EndSample();
 
@@ -271,7 +278,6 @@ namespace csDelaunay
             Profiler.BeginSample("Fortunes: Getting data bounds");
             Rectf dataBounds = SiteUtils.GetSitesBounds(sites);
             Profiler.EndSample();
-
 
             int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4); // WTF
 
@@ -502,6 +508,13 @@ namespace csDelaunay
             }
             vertices.Clear();
             Profiler.EndSample();
+
+            UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(lbnd), "lbnd");
+            UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(rbnd), "rbnd");
+            UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(llbnd), "llbnd");
+            UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(rrbnd), "rrbnd");
+            UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(bisector), "bisector");
+
         }
 
         public void LloydRelaxation(int nbIterations)
