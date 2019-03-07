@@ -225,6 +225,7 @@ namespace csDelaunay
 
 
         int currentSiteIndex;
+        int nVertices;
         HalfedgePriorityQueue heap;
 
         EdgeList edgeList;
@@ -234,6 +235,7 @@ namespace csDelaunay
         private void FortunesAlgorithm()
         {
             currentSiteIndex = 0;
+            nVertices = 0;
 
             // vars
 
@@ -383,7 +385,7 @@ namespace csDelaunay
 #endif
 
                     v = lbnd.vertex;
-                    v.SetIndex();
+                    v.VertexIndex = nVertices++;
                     lbnd.edge.SetVertex(lbnd.leftRight, v);
                     rbnd.edge.SetVertex(rbnd.leftRight, v);
                     edgeList.Remove(lbnd);

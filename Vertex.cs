@@ -7,23 +7,29 @@ namespace csDelaunay
 
     public class Vertex : ICoord
     {
+        // variables
+        public Vector2f Coord { get; set; }
+        public int VertexIndex { get; set; }
 
+        // Properties
+        public float x { get { return Coord.x; } }
+        public float y { get { return Coord.y; } }
+
+        // Static
         public static readonly Vertex VERTEX_AT_INFINITY = new Vertex(float.NaN, float.NaN);
 
         #region Pool
-        private static Queue<Vertex> pool = new Queue<Vertex>();
-
-        private static int nVertices = 0;
-
+        private static Queue<Vertex> unusedPool = new Queue<Vertex>();
+        
         private static Vertex Create(float x, float y)
         {
             if (float.IsNaN(x) || float.IsNaN(y))
             {
                 return VERTEX_AT_INFINITY;
             }
-            if (pool.Count > 0)
+            if (unusedPool.Count > 0)
             {
-                return pool.Dequeue().Init(x, y);
+                return unusedPool.Dequeue().Init(x, y);
             }
             else
             {
@@ -33,13 +39,7 @@ namespace csDelaunay
         #endregion
 
         #region Object
-
-        public Vector2f Coord { get; set; }
-
-        public float x { get { return Coord.x; } }
-        public float y { get { return Coord.y; } }
-        public int VertexIndex { get; private set; }
-
+        
         public Vertex(float x, float y)
         {
             Init(x, y);
@@ -55,12 +55,7 @@ namespace csDelaunay
         public void Dispose()
         {
             Coord = Vector2f.zero;
-            pool.Enqueue(this);
-        }
-
-        public void SetIndex()
-        {
-            VertexIndex = nVertices++;
+            unusedPool.Enqueue(this);
         }
 
         public override string ToString()
