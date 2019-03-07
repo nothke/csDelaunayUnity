@@ -17,22 +17,13 @@ namespace csDelaunay
 
             if (unusedPool.Count > 0)
             {
-                Profiler.BeginSample("Dequeuing site");
                 Site site = unusedPool.Dequeue();
-                Profiler.EndSample();
-
-                Profiler.BeginSample("Initing site");
                 site.Init(p, index, weigth);
-                Profiler.EndSample();
-
                 return site;
             }
             else
             {
-                Profiler.BeginSample("Creating new site");
                 Site site = new Site(p, index, weigth);
-                Profiler.EndSample();
-
                 return site;
             }
         }

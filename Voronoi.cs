@@ -102,9 +102,7 @@ namespace csDelaunay
                 Vector2f p = points[i];
 
                 float weigth = (float)weigthDistributor.NextDouble() * 100;
-                Profiler.BeginSample("Create site");
                 Site site = Site.Create(p, i, weigth);
-                Profiler.EndSample();
                 sites.Add(site);
                 SitesIndexedByLocation[p] = site;
             }
