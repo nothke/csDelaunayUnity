@@ -24,6 +24,11 @@ namespace csDelaunay
 
         public void Clear()
         {
+            for (int i = 0; i < sites.Count; i++)
+            {
+                sites[i].Dispose();
+            }
+
             sites.Clear();
 #if TRIANGLES
             triangles.Clear();
@@ -97,7 +102,9 @@ namespace csDelaunay
                 Vector2f p = points[i];
 
                 float weigth = (float)weigthDistributor.NextDouble() * 100;
+                Profiler.BeginSample("Create site");
                 Site site = Site.Create(p, i, weigth);
+                Profiler.EndSample();
                 sites.Add(site);
                 SitesIndexedByLocation[p] = site;
             }
@@ -306,13 +313,13 @@ namespace csDelaunay
             Profiler.BeginSample("Fortunes: Main Loop");
             while (true)
             {
-                if (!heap.Empty())
+                if (heap.count > 0)
                 {
                     newIntStar = heap.Min();
                 }
 
                 if (newSite != null &&
-                    (heap.Empty() || CompareByYThenX(newSite, newIntStar) < 0))
+                    (heap.count == 0 || CompareByYThenX(newSite, newIntStar) < 0))
                 {
                     // New site is smallest
                     //Debug.Log("smallest: new site " + newSite);
@@ -331,7 +338,9 @@ namespace csDelaunay
                     //UnityEngine.Debug.Log("new Site is in region of existing site: " + bottomSite);
 
                     // Step 9
+                    Profiler.BeginSample("CreateBisectingEdge");
                     edge = Edge.CreateBisectingEdge(bottomSite, newSite);
+                    Profiler.EndSample();
                     //UnityEngine.Debug.Log("new edge: " + edge);
                     Edges.Add(edge);
 
@@ -369,7 +378,7 @@ namespace csDelaunay
 
                     newSite = GetNextSite();
                 }
-                else if (!heap.Empty())
+                else if (heap.count > 0)
                 {
                     // Intersection is smallest
                     lbnd = heap.ExtractMin();
@@ -431,26 +440,30 @@ namespace csDelaunay
             // DISPOSE
 
             // Heap should be empty now
+            Profiler.BeginSample("Fortunes: Dispose");
+
             heap.Dispose();
             edgeList.Dispose();
 
-            foreach (Halfedge halfedge in halfEdges)
+            for (int i = 0; i < halfEdges.Count; i++)
             {
-                halfedge.ReallyDispose();
+                halfEdges[i].ReallyDispose();
             }
             halfEdges.Clear();
 
             // we need the vertices to clip the edges
-            foreach (Edge e in Edges)
+            for (int i = 0; i < Edges.Count; i++)
             {
-                e.ClipVertices(PlotBounds);
+                Edges[i].ClipVertices(PlotBounds); // alloc
             }
             // But we don't actually ever use them again!
-            foreach (Vertex ve in vertices)
+            for (int i = 0; i < vertices.Count; i++)
             {
-                ve.Dispose();
+                vertices[i].Dispose();
             }
             vertices.Clear();
+
+            Profiler.EndSample();
         }
 
         public void LloydRelaxation(int nbIterations)

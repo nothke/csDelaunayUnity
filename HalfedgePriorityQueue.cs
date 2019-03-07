@@ -9,7 +9,7 @@ namespace csDelaunay
     {
 
         private Halfedge[] hash;
-        private int count;
+        public int count;
         private int minBucked;
         private int hashSize;
 
@@ -127,11 +127,6 @@ namespace csDelaunay
             {
                 minBucked++;
             }
-        }
-
-        public bool Empty()
-        {
-            return count == 0;
         }
 
         /*

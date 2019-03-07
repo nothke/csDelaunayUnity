@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 
 namespace csDelaunay
 {
@@ -8,17 +9,31 @@ namespace csDelaunay
     public class Site : ICoord
     {
 
-        private static Queue<Site> pool = new Queue<Site>();
+        private static Queue<Site> unusedPool = new Queue<Site>();
 
         public static Site Create(Vector2f p, int index, float weigth)
         {
-            if (pool.Count > 0)
+            //UnityEngine.Debug.Log("Queuesize: " + unusedPool.Count);
+
+            if (unusedPool.Count > 0)
             {
-                return pool.Dequeue().Init(p, index, weigth);
+                Profiler.BeginSample("Dequeuing site");
+                Site site = unusedPool.Dequeue();
+                Profiler.EndSample();
+
+                Profiler.BeginSample("Initing site");
+                site.Init(p, index, weigth);
+                Profiler.EndSample();
+
+                return site;
             }
             else
             {
-                return new Site(p, index, weigth);
+                Profiler.BeginSample("Creating new site");
+                Site site = new Site(p, index, weigth);
+                Profiler.EndSample();
+
+                return site;
             }
         }
 
@@ -122,7 +137,12 @@ namespace csDelaunay
             coord = p;
             siteIndex = index;
             this.weigth = weigth;
-            edges = new List<Edge>();
+
+            if (edges == null)
+                edges = new List<Edge>(); // twas alloc
+            else
+                edges.Clear();
+
             region = null;
 
             return this;
@@ -142,7 +162,7 @@ namespace csDelaunay
         public void Dispose()
         {
             Clear();
-            pool.Enqueue(this);
+            unusedPool.Enqueue(this);
         }
 
         private void Clear()
@@ -150,17 +170,17 @@ namespace csDelaunay
             if (edges != null)
             {
                 edges.Clear();
-                edges = null;
+                //edges = null;
             }
             if (edgeOrientations != null)
             {
                 edgeOrientations.Clear();
-                edgeOrientations = null;
+                //edgeOrientations = null;
             }
             if (region != null)
             {
                 region.Clear();
-                region = null;
+                //region = null;
             }
         }
 

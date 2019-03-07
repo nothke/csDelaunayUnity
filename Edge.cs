@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 
 namespace csDelaunay
 {
@@ -47,12 +48,14 @@ namespace csDelaunay
                 c /= dy;
             }
 
-            Edge edge = Edge.Create();
+            Edge edge = Create();
 
             edge.LeftSite = s0;
             edge.RightSite = s1;
-            s0.AddEdge(edge);
-            s1.AddEdge(edge);
+            Profiler.BeginSample("AddEdge");
+            s0.AddEdge(edge); // alloc
+            s1.AddEdge(edge); // alloc
+            Profiler.EndSample();
 
             edge.a = a;
             edge.b = b;
@@ -197,7 +200,13 @@ namespace csDelaunay
 
         public Edge Init()
         {
-            sites = new Site[2];
+            if (sites == null)
+                sites = new Site[2]; // twas alloc
+            else
+            {
+                sites[0] = null;
+                sites[1] = null;
+            }
 
             return this;
         }

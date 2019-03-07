@@ -20,7 +20,7 @@ namespace csDelaunay
 
         #region Pool
         private static Queue<Vertex> unusedPool = new Queue<Vertex>();
-        
+
         private static Vertex Create(float x, float y)
         {
             if (float.IsNaN(x) || float.IsNaN(y))
@@ -39,7 +39,7 @@ namespace csDelaunay
         #endregion
 
         #region Object
-        
+
         public Vertex(float x, float y)
         {
             Init(x, y);
