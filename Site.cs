@@ -8,6 +8,7 @@ namespace csDelaunay
 
     public class Site : ICoord
     {
+        const int EDGES_CAPACITY = 10;
 
         private static Queue<Site> unusedPool = new Queue<Site>();
 
@@ -130,7 +131,7 @@ namespace csDelaunay
             this.weigth = weigth;
 
             if (edges == null)
-                edges = new List<Edge>(); // twas alloc
+                edges = new List<Edge>(EDGES_CAPACITY);
             else
                 edges.Clear();
 

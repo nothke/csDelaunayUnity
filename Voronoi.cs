@@ -11,7 +11,7 @@ namespace csDelaunay
     public class Voronoi
     {
 
-        private List<Site> sites;
+        public List<Site> sites;
 #if TRIANGLES
         private List<Triangle> triangles;
 #endif
@@ -30,10 +30,12 @@ namespace csDelaunay
                     Edges[i].Dispose();
             }
 
+
             for (int i = 0; i < sites.Count; i++)
             {
                 sites[i].Dispose();
             }
+
 
             sites.Clear();
 #if TRIANGLES
@@ -493,12 +495,13 @@ namespace csDelaunay
             vertices.Clear();
             Profiler.EndSample();
 
+            /*
             UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(lbnd), "lbnd");
             UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(rbnd), "rbnd");
             UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(llbnd), "llbnd");
             UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(rrbnd), "rrbnd");
             UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(bisector), "bisector");
-
+            */
         }
 
         public void LloydRelaxation(int nbIterations)

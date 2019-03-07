@@ -24,7 +24,6 @@ namespace csDelaunay
 
         public static void DisposeAll()
         {
-            UnityEngine.Debug.Log(all.Count);
             for (int i = 0; i < all.Count; i++)
             {
                 if (!all[i].disposed)
