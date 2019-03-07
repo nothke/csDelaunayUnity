@@ -31,7 +31,7 @@ namespace csDelaunay
             rightEnd.Dispose();
             rightEnd = null;
 
-            UnityEngine.Debug.Log(hash.Length);
+            //UnityEngine.Debug.Log(hash.Length);
 
             // cleanup the hash
             for (int i = 0; i < hash.Length; i++)

@@ -15,6 +15,7 @@ namespace csDelaunay
 
         #region Pool
         private static Queue<Edge> pool = new Queue<Edge>();
+        public bool disposed { get; private set; }
 
         private static int nEdges = 0;
         /*
@@ -25,7 +26,6 @@ namespace csDelaunay
 		 */
         public static Edge CreateBisectingEdge(Site s0, Site s1)
         {
-            Profiler.BeginSample("Bisecting precalc");
             float dx, dy;
             float absdx, absdy;
             float a, b, c;
@@ -48,7 +48,6 @@ namespace csDelaunay
                 a = dx / dy;
                 c /= dy;
             }
-            Profiler.EndSample();
 
             Profiler.BeginSample("Edge create");
             Edge edge = Create(); // alloc
@@ -70,10 +69,13 @@ namespace csDelaunay
 
         private static Edge Create()
         {
+            //UnityEngine.Debug.Log("Pool size: " + pool.Count);
+
             Edge edge;
             if (pool.Count > 0)
             {
                 edge = pool.Dequeue();
+                edge.disposed = false;
                 edge.Init();
             }
             else
@@ -191,9 +193,10 @@ namespace csDelaunay
             if (ClippedEnds != null)
                 ClippedEnds = null;
 
-            sites = null;
+            //sites = null; // was alloc?
 
             pool.Enqueue(this);
+            disposed = true;
         }
 
         public Edge()
@@ -204,6 +207,7 @@ namespace csDelaunay
 
         public Edge Init()
         {
+            Profiler.BeginSample("WTF");
             if (sites == null)
                 sites = new Site[2]; // twas alloc
             else
@@ -211,6 +215,7 @@ namespace csDelaunay
                 sites[0] = null;
                 sites[1] = null;
             }
+            Profiler.EndSample();
 
             return this;
         }

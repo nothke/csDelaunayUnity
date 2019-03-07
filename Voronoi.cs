@@ -24,6 +24,12 @@ namespace csDelaunay
 
         public void Clear()
         {
+            for (int i = 0; i < Edges.Count; i++)
+            {
+                if (!Edges[i].disposed)
+                    Edges[i].Dispose();
+            }
+
             for (int i = 0; i < sites.Count; i++)
             {
                 sites[i].Dispose();
@@ -33,10 +39,7 @@ namespace csDelaunay
 #if TRIANGLES
             triangles.Clear();
 #endif
-            for (int i = 0; i < Edges.Count; i++)
-            {
-                Edges[i].Dispose();
-            }
+
 
             Edges.Clear();
             PlotBounds = Rectf.zero;
@@ -380,6 +383,7 @@ namespace csDelaunay
                 }
                 else if (heap.count > 0)
                 {
+                    
                     // Intersection is smallest
                     lbnd = heap.ExtractMin();
                     llbnd = lbnd.edgeListLeftNeighbor;
@@ -403,10 +407,12 @@ namespace csDelaunay
                     leftRight = false;
                     if (bottomSite.y > topSite.y)
                     {
+                        Profiler.BeginSample("Bottom-Top");
                         tempSite = bottomSite;
                         bottomSite = topSite;
                         topSite = tempSite;
                         leftRight = true;
+                        Profiler.EndSample();
                     }
                     edge = Edge.CreateBisectingEdge(bottomSite, topSite);
                     Edges.Add(edge);
@@ -416,19 +422,24 @@ namespace csDelaunay
                     edge.SetVertex(!leftRight, v);
                     if ((vertex = Vertex.Intersect(llbnd, bisector)) != null)
                     {
+                        Profiler.BeginSample("llbnd, bisector");
                         vertices.Add(vertex);
                         heap.Remove(llbnd);
                         llbnd.vertex = vertex;
                         llbnd.ystar = vertex.y + bottomSite.Dist(vertex);
                         heap.Insert(llbnd);
+                        Profiler.EndSample();
                     }
                     if ((vertex = Vertex.Intersect(bisector, rrbnd)) != null)
                     {
+                        Profiler.BeginSample("bisector, rrbnd");
                         vertices.Add(vertex);
                         bisector.vertex = vertex;
                         bisector.ystar = vertex.y + bottomSite.Dist(vertex);
                         heap.Insert(bisector);
+                        Profiler.EndSample();
                     }
+                    
                 }
                 else
                 {
@@ -440,29 +451,36 @@ namespace csDelaunay
             // DISPOSE
 
             // Heap should be empty now
-            Profiler.BeginSample("Fortunes: Dispose");
-
+            Profiler.BeginSample("Fortunes: Heap dispose");
             heap.Dispose();
+            Profiler.EndSample();
+            Profiler.BeginSample("Fortunes: Edgelist dispose");
             edgeList.Dispose();
+            Profiler.EndSample();
 
+            Profiler.BeginSample("Fortunes: Halfedges REALLY dispose");
             for (int i = 0; i < halfEdges.Count; i++)
             {
                 halfEdges[i].ReallyDispose();
             }
             halfEdges.Clear();
+            Profiler.EndSample();
 
+            Profiler.BeginSample("Fortunes: ClipVertices");
             // we need the vertices to clip the edges
             for (int i = 0; i < Edges.Count; i++)
             {
-                Edges[i].ClipVertices(PlotBounds); // alloc
+                Edges[i].ClipVertices(PlotBounds); // MASSIVE alloc
             }
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Vertices dispose");
             // But we don't actually ever use them again!
             for (int i = 0; i < vertices.Count; i++)
             {
                 vertices[i].Dispose();
             }
             vertices.Clear();
-
             Profiler.EndSample();
         }
 

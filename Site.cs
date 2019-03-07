@@ -160,6 +160,19 @@ namespace csDelaunay
         {
             if (edges != null)
             {
+                int disposedct = 0;
+                for (int i = 0; i < edges.Count; i++)
+                {
+                    if (!edges[i].disposed)
+                    {
+                        disposedct++;
+                        edges[i].Dispose();
+                    }
+                }
+
+                if (disposedct > 0)
+                    UnityEngine.Debug.Log("There were " + disposedct + " undisposed edges");
+
                 edges.Clear();
                 //edges = null;
             }
