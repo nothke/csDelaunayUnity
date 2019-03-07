@@ -9,7 +9,7 @@ namespace csDelaunay
     public class Voronoi
     {
 
-        private SiteList sites;
+        private List<Site> sites;
         private List<Triangle> triangles;
 
         public List<Edge> Edges { get; private set; }
@@ -20,7 +20,7 @@ namespace csDelaunay
 
         public void Clear()
         {
-            sites.Dispose();
+            sites.Clear();
 
             triangles.Clear();
 
@@ -32,7 +32,7 @@ namespace csDelaunay
         [Obsolete]
         public void Dispose()
         {
-            sites.Dispose();
+            sites.Clear();
             sites = null;
 
             foreach (Triangle t in triangles)
@@ -72,7 +72,7 @@ namespace csDelaunay
             Profiler.BeginSample("Create sites and dict");
 
             if (sites == null)
-                sites = new SiteList();
+                sites = new List<Site>(points.Count);
 
             if (SitesIndexedByLocation == null)
                 SitesIndexedByLocation = new Dictionary<Vector2f, Site>(points.Count);
@@ -208,6 +208,9 @@ namespace csDelaunay
 
         #endregion
 
+
+        int currentSiteIndex;
+
         private void FortunesAlgorithm()
         {
             // vars
@@ -230,19 +233,19 @@ namespace csDelaunay
 
             // Data bounds
             Profiler.BeginSample("Fortunes: Getting data bounds");
-            Rectf dataBounds = sites.GetSitesBounds();
+            Rectf dataBounds = SiteUtils.GetSitesBounds(sites);
             Profiler.EndSample();
 
             // WTF
-            int sqrtSitesNb = (int)Math.Sqrt(sites.Count() + 4);
+            int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4);
             HalfedgePriorityQueue heap = new HalfedgePriorityQueue(dataBounds.y, dataBounds.height, sqrtSitesNb);
 
             EdgeList edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
             List<Halfedge> halfEdges = new List<Halfedge>();
             List<Vertex> vertices = new List<Vertex>();
 
-            Site bottomMostSite = sites.Next();
-            newSite = sites.Next();
+            Site bottomMostSite = SiteUtils.GetNext(sites, ref currentSiteIndex); // sites.Next();
+            newSite = SiteUtils.GetNext(sites, ref currentSiteIndex);// sites.Next();
 
             while (true)
             {
@@ -307,7 +310,7 @@ namespace csDelaunay
                         heap.Insert(bisector);
                     }
 
-                    newSite = sites.Next();
+                    newSite = SiteUtils.GetNext(sites, ref currentSiteIndex);// sites.Next();
                 }
                 else if (!heap.Empty())
                 {
@@ -397,8 +400,8 @@ namespace csDelaunay
             {
                 List<Vector2f> newPoints = new List<Vector2f>();
                 // Go thourgh all sites
-                sites.ResetListIndex();
-                Site site = sites.Next();
+                currentSiteIndex = 0; // sites.ResetListIndex();
+                Site site = SiteUtils.GetNext(sites, ref currentSiteIndex);// sites.Next();
 
                 while (site != null)
                 {
@@ -406,7 +409,7 @@ namespace csDelaunay
                     List<Vector2f> region = site.Region(PlotBounds);
                     if (region.Count < 1)
                     {
-                        site = sites.Next();
+                        site = SiteUtils.GetNext(sites, ref currentSiteIndex);
                         continue;
                     }
 
@@ -444,7 +447,7 @@ namespace csDelaunay
                     centroid.y /= (6 * signedArea);
                     // Move site to the centroid of its Voronoi cell
                     newPoints.Add(centroid);
-                    site = sites.Next();
+                    site = SiteUtils.GetNext(sites, ref currentSiteIndex);
                 }
 
                 // Between each replacement of the cendroid of the cell,

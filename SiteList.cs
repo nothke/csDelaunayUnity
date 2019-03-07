@@ -4,7 +4,57 @@ using System.Collections.Generic;
 
 namespace csDelaunay
 {
+    public static class SiteUtils
+    {
+        public static Rectf GetSitesBounds(List<Site> sites)
+        {
+            /*if (!sorted)
+            {
+                Site.SortSites(sites);
+                //SortList();
+                //ResetListIndex();
+                //currentIndex = 0;
+            }*/
 
+            Site.SortSites(sites); // always sort
+
+            float xmin, xmax, ymin, ymax;
+
+            if (sites.Count == 0)
+            {
+                return Rectf.zero;
+            }
+
+            xmin = float.MaxValue;
+            xmax = float.MinValue;
+
+            foreach (Site site in sites)
+            {
+                if (site.x < xmin) xmin = site.x;
+                if (site.x > xmax) xmax = site.x;
+            }
+
+            // here's where we assume that the sites have been sorted on y:
+            ymin = sites[0].y;
+            ymax = sites[sites.Count - 1].y;
+
+            return new Rectf(xmin, ymin, xmax - xmin, ymax - ymin);
+        }
+
+        public static Site GetNext(List<Site> sites, ref int currentIndex)
+        {
+            if (currentIndex < sites.Count)
+            {
+                return sites[currentIndex++];
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+#if false
     public class SiteList
     {
 
@@ -134,4 +184,5 @@ namespace csDelaunay
             sorted = true;
         }
     }
+#endif
 }
