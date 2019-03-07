@@ -25,6 +25,7 @@ namespace csDelaunay
 		 */
         public static Edge CreateBisectingEdge(Site s0, Site s1)
         {
+            Profiler.BeginSample("Bisecting precalc");
             float dx, dy;
             float absdx, absdy;
             float a, b, c;
@@ -47,8 +48,11 @@ namespace csDelaunay
                 a = dx / dy;
                 c /= dy;
             }
+            Profiler.EndSample();
 
-            Edge edge = Create();
+            Profiler.BeginSample("Edge create");
+            Edge edge = Create(); // alloc
+            Profiler.EndSample();
 
             edge.LeftSite = s0;
             edge.RightSite = s1;

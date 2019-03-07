@@ -51,13 +51,12 @@ namespace csDelaunay
 
         public void Dispose()
         {
-            UnityEngine.Debug.Log("Disposing heap");
             // Get rid of dummies
             for (int i = 0; i < hashSize; i++)
             {
                 hash[i].Dispose();
             }
-            //hash = null;
+            //hash = null; // causes allocs in the next run
         }
 
         public void Init()

@@ -33,6 +33,11 @@ namespace csDelaunay
 #if TRIANGLES
             triangles.Clear();
 #endif
+            for (int i = 0; i < Edges.Count; i++)
+            {
+                Edges[i].Dispose();
+            }
+
             Edges.Clear();
             PlotBounds = Rectf.zero;
             SitesIndexedByLocation.Clear();
@@ -279,15 +284,14 @@ namespace csDelaunay
             Profiler.EndSample();
 
             Profiler.BeginSample("Fortunes: Init EdgeList");
-            /*
             if (edgeList == null)
             {
                 edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
             }
             else
-                edgeList.ClearNoResize(dataBounds.x, dataBounds.width);*/
+                edgeList.ClearNoResize(dataBounds.x, dataBounds.width);
 
-            edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
+            //edgeList = new EdgeList(dataBounds.x, dataBounds.width, sqrtSitesNb);
             Profiler.EndSample();
 
             Profiler.BeginSample("Fortunes: Init HEs and vertices");
