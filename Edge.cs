@@ -166,7 +166,7 @@ namespace csDelaunay
         // Once clipVertices() is called, this array will hold two Points
         // representing the clipped coordinates of the left and the right ends...
         public Vector2f[] ClippedEnds { get; private set; }
-        
+
         // The two input Sites for which this Edge is a bisector:
         private Site[] sites;
         public Site LeftSite { get { return sites[0]; } set { sites[0] = value; } }
@@ -185,11 +185,6 @@ namespace csDelaunay
             LeftVertex = null;
             RightVertex = null;
 
-            //if (ClippedEnds != null)
-            //    ClippedEnds = null;
-
-            //sites = null; // was alloc?
-
             pool.Enqueue(this);
             disposed = true;
         }
@@ -197,27 +192,19 @@ namespace csDelaunay
         public Edge()
         {
             edgeIndex = nEdges++;
+
+            sites = new Site[2];
+            ClippedEnds = new Vector2f[2];
+
             Init();
         }
 
-        public Edge Init()
+        void Init()
         {
-            Profiler.BeginSample("WTF");
-            if (sites == null)
-                sites = new Site[2]; // twas alloc
-            else
-            {
-                sites[0] = null;
-                sites[1] = null;
-            }
-            Profiler.EndSample();
-
-            if (ClippedEnds == null)
-                ClippedEnds = new Vector2f[2];
+            sites[0] = null;
+            sites[1] = null;
 
             Clipped = false;
-
-            return this;
         }
 
         public override string ToString()
