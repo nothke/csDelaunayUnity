@@ -1,4 +1,10 @@
+<p align="center">
+<img src="https://i.imgur.com/KO1h1Qs.gif">
+</p>
+
 A GC alloc free version of [csDelaunay by PouletFrit](https://github.com/PouletFrit/csDelaunay) optimised for runtime generation
+
+This version has breaking changes between the original, so it is not necesarily a "fork". Since this is used for a personal project where only constructing voronoi diagrams and retrieving clipped edges was needed, all other features are not tested nor guaranteed to be GC alloc free (like LloydRelaxation), and some methods may be removed or commented out.
 
 ## How to use
 
