@@ -251,7 +251,6 @@ namespace csDelaunay
 
         #endregion
 
-
         int currentSiteIndex;
         int nVertices;
         HalfedgePriorityQueue heap;
@@ -291,7 +290,7 @@ namespace csDelaunay
 
             // Data bounds
             Profiler.BeginSample("Fortunes: Getting data bounds");
-            Rectf dataBounds = SiteUtils.GetSitesBounds(sites);
+            Rectf dataBounds = Site.GetSitesBounds(sites);
             Profiler.EndSample();
 
             int sqrtSitesNb = (int)Math.Sqrt(sites.Count + 4); // WTF
