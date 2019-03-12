@@ -20,7 +20,7 @@ namespace csDelaunay
         public Rectf PlotBounds { get; private set; }
         public Dictionary<Vector2f, Site> SitesIndexedByLocation { get; private set; }
 
-        private Random weigthDistributor;
+        private Random weightDistributor;
 
         public void Clear()
         {
@@ -78,8 +78,8 @@ namespace csDelaunay
             Halfedge.PoolDummies(halfEdgePoolSize);
             Edge.PoolDummies(edgePoolSize);
 
-            if (weigthDistributor == null)
-                weigthDistributor = new Random();
+            if (weightDistributor == null)
+                weightDistributor = new Random();
 
             Init(points, plotBounds);
         }
@@ -88,8 +88,8 @@ namespace csDelaunay
         {
             Halfedge.PoolDummies(250);
 
-            if (weigthDistributor == null)
-                weigthDistributor = new Random();
+            if (weightDistributor == null)
+                weightDistributor = new Random();
 
             Init(points, plotBounds);
         }
@@ -102,7 +102,7 @@ namespace csDelaunay
 
         public Voronoi(List<Vector2f> points, Rectf plotBounds, int lloydIterations)
         {
-            weigthDistributor = new Random();
+            weightDistributor = new Random();
             Init(points, plotBounds);
             LloydRelaxation(lloydIterations);
         }
@@ -124,8 +124,8 @@ namespace csDelaunay
             {
                 Vector2f p = points[i];
 
-                float weigth = (float)weigthDistributor.NextDouble() * 100;
-                Site site = Site.Create(p, i, weigth);
+                float weight = (float)weightDistributor.NextDouble() * 100;
+                Site site = Site.Create(p, i, weight);
                 sites.Add(site);
                 SitesIndexedByLocation[p] = site;
             }
