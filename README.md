@@ -17,3 +17,11 @@ void AnalyseCapacities()
     Debug.Log(voronoi.DebugCapacities());
 }
 ```
+You might get a result like this:
+```
+Sites: 50, Halfedges: 218, Edges: 139, EdgesPerSite: 20
+```
+These are your maximum capacities. Now, plug those numbers (with a few more as a margin, just in case) into the Voronoi constructor:
+```
+voronoi = new Voronoi(points, new Rectf(0, 0, 2, 2), 225, 150, 25);
+```
