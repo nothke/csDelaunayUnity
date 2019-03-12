@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://i.imgur.com/KO1h1Qs.gif">
+<img src="https://i.imgur.com/KO1h1Qs.gif" width="600">
 </p>
 
 A GC alloc free version of [csDelaunay by PouletFrit](https://github.com/PouletFrit/csDelaunay) optimised for runtime generation
