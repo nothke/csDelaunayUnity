@@ -70,13 +70,14 @@ namespace csDelaunay
 
             PlotBounds = Rectf.zero;
             SitesIndexedByLocation.Clear();
-            SitesIndexedByLocation = null;
+            //SitesIndexedByLocation = null;
         }
 
-        public Voronoi(List<Vector2f> points, Rectf plotBounds, int halfEdgePoolSize, int edgePoolSize)
+        public Voronoi(List<Vector2f> points, Rectf plotBounds, int halfEdgePoolCapacity, int edgePoolCapacity, int edgesPerSiteCapacity)
         {
-            Halfedge.PoolDummies(halfEdgePoolSize);
-            Edge.PoolDummies(edgePoolSize);
+            Halfedge.PoolDummies(halfEdgePoolCapacity);
+            Edge.PoolDummies(edgePoolCapacity);
+            Site.edgesCapacity = edgesPerSiteCapacity;
 
             if (weightDistributor == null)
                 weightDistributor = new Random();
@@ -86,8 +87,6 @@ namespace csDelaunay
 
         public Voronoi(List<Vector2f> points, Rectf plotBounds)
         {
-            Halfedge.PoolDummies(250);
-
             if (weightDistributor == null)
                 weightDistributor = new Random();
 
