@@ -6,11 +6,10 @@ A GC alloc free version of [csDelaunay by PouletFrit](https://github.com/PouletF
 
 This version has breaking changes between the original, so it is not necesarily a "fork". Since this is used for a personal project where only constructing voronoi diagrams and retrieving clipped edges was needed, all other features are not tested nor guaranteed to be GC alloc free (like LloydRelaxation), and some methods may be removed or commented out.
 
-## How to use
-
+## How to use alloc free
+To make sure the code runs alloc-free you must initialize element pools with capacities suited to your [maximum] number of sites. This process is not required, but every time the lists and queues get extended, you will have a GC alloc, which is recommended to avoid. 
 #### 1. Analyse capacities
-To make the code run alloc-free you must initialize element pools with capacities suited to your [maximum] number of sites. You can find out the required capacities by creating a test voronoi diagram and rebuild it many times, at the end call `voronoi.DebugCapacities()` like so:
-
+You can find out the required capacities by creating a test voronoi diagram and rebuilding it many times. At the end call `voronoi.DebugCapacities()`, for example:
 ```
 void AnalyseCapacities()
 {
