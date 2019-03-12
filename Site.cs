@@ -11,6 +11,19 @@ namespace csDelaunay
         public static int edgesCapacity = 10;
 
         private static Queue<Site> unusedPool = new Queue<Site>();
+        public static int PoolCapacity { get => unusedPool.Count; }
+
+        public static int GetMaxEdgeCapacity(List<Site> sites)
+        {
+            int max = 0;
+            foreach (var site in sites)
+            {
+                int c = site.edges.Capacity;
+                if (c > max) max = c;
+            }
+
+            return max;
+        }
 
         public static Site Create(Vector2f p, int index, float weigth)
         {

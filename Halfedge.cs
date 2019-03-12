@@ -10,7 +10,8 @@ namespace csDelaunay
         public static List<Halfedge> all = new List<Halfedge>();
 
         #region Pool
-        public static Queue<Halfedge> unusedPool = new Queue<Halfedge>();
+        private static Queue<Halfedge> unusedPool = new Queue<Halfedge>();
+        public static int PoolCapacity { get => all.Count; }
         bool disposed;
 
         public static void PoolDummies(int num)

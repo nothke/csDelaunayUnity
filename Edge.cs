@@ -15,11 +15,14 @@ namespace csDelaunay
         static List<Edge> all = new List<Edge>();
 
         #region Pool
-        private static Queue<Edge> pool = new Queue<Edge>();
+        private static Queue<Edge> unusedPool = new Queue<Edge>();
+        public static int PoolCapacity { get => all.Count; }
         public bool disposed { get; private set; }
 
         public static void PoolDummies(int num)
         {
+            all.Capacity = num;
+
             var dummies = new Edge[num];
             for (int i = 0; i < num; i++)
             {
@@ -102,9 +105,9 @@ namespace csDelaunay
             //UnityEngine.Debug.Log("Pool size: " + pool.Count);
 
             Edge edge;
-            if (pool.Count > 0)
+            if (unusedPool.Count > 0)
             {
-                edge = pool.Dequeue();
+                edge = unusedPool.Dequeue();
                 edge.disposed = false;
                 edge.Init();
             }
@@ -214,7 +217,7 @@ namespace csDelaunay
             LeftVertex = null;
             RightVertex = null;
 
-            pool.Enqueue(this);
+            unusedPool.Enqueue(this);
             disposed = true;
         }
 

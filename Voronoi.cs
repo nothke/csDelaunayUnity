@@ -106,6 +106,12 @@ namespace csDelaunay
             LloydRelaxation(lloydIterations);
         }
 
+        public string DebugCapacities()
+        {
+            int edgePerSite = Site.GetMaxEdgeCapacity(sites);
+            return $"Sites: {sites.Count}, Halfedges: {Halfedge.PoolCapacity}, Edges: {Edge.PoolCapacity}, EdgesPerSite: {edgePerSite}";
+        }
+
         private void Init(List<Vector2f> points, Rectf plotBounds)
         {
             Profiler.BeginSample("Create sites and dict");
