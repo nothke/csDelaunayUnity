@@ -18,6 +18,20 @@ namespace csDelaunay
         private static Queue<Edge> pool = new Queue<Edge>();
         public bool disposed { get; private set; }
 
+        public static void PoolDummies(int num)
+        {
+            var dummies = new Edge[num];
+            for (int i = 0; i < num; i++)
+            {
+                dummies[i] = Create();
+            }
+
+            for (int i = 0; i < num; i++)
+            {
+                dummies[i].Dispose();
+            }
+        }
+
         public bool Clipped { get; private set; }
 
         private static int nEdges = 0;

@@ -73,6 +73,17 @@ namespace csDelaunay
             SitesIndexedByLocation = null;
         }
 
+        public Voronoi(List<Vector2f> points, Rectf plotBounds, int halfEdgePoolSize, int edgePoolSize)
+        {
+            Halfedge.PoolDummies(halfEdgePoolSize);
+            Edge.PoolDummies(edgePoolSize);
+
+            if (weigthDistributor == null)
+                weigthDistributor = new Random();
+
+            Init(points, plotBounds);
+        }
+
         public Voronoi(List<Vector2f> points, Rectf plotBounds)
         {
             Halfedge.PoolDummies(250);
