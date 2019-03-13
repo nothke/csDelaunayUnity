@@ -40,6 +40,15 @@ namespace csDelaunay
             }
         }
 
+        /// <summary>
+        /// Use only for testing
+        /// </summary>
+        public static void FlushUnused()
+        {
+            all = new List<Halfedge>();
+            unusedPool = new Queue<Halfedge>();
+        }
+
         public static Halfedge Create(Edge edge, bool lr)
         {
             if (unusedPool.Count > 0)

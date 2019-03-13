@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define CAPACITY_WARNING
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Profiling;
@@ -12,6 +14,14 @@ namespace csDelaunay
 
         private static Queue<Site> unusedPool = new Queue<Site>();
         public static int PoolCapacity { get => unusedPool.Count; }
+
+        /// <summary>
+        /// Use only for testing
+        /// </summary>
+        public static void FlushUnused()
+        {
+            unusedPool = new Queue<Site>();
+        }
 
         public static int GetMaxEdgeCapacity(List<Site> sites)
         {
@@ -239,16 +249,20 @@ namespace csDelaunay
             }
         }
 
+#if CAPACITY_WARNING
         int prevCapacity;
+#endif
 
         public void AddEdge(Edge edge)
         {
             edges.Add(edge);
 
+#if CAPACITY_WARNING
             if (edges.Capacity != prevCapacity)
                 UnityEngine.Debug.Log($"Capacity got extended from {prevCapacity} to {edges.Capacity}");
 
             prevCapacity = edges.Capacity;
+#endif
         }
 
         public Edge NearestEdge()

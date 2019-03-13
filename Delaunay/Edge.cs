@@ -35,6 +35,15 @@ namespace csDelaunay
             }
         }
 
+        /// <summary>
+        /// Use only for testing
+        /// </summary>
+        public static void FlushUnused()
+        {
+            all = new List<Edge>();
+            unusedPool = new Queue<Edge>();
+        }
+
         public bool Clipped { get; private set; }
 
         private static int nEdges = 0;

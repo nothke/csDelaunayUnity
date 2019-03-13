@@ -80,6 +80,13 @@ namespace csDelaunay
             Site.edgesCapacity = edgesPerSiteCapacity;
         }
 
+        public static void FlushPools()
+        {
+            Halfedge.FlushUnused();
+            Edge.FlushUnused();
+            Site.FlushUnused();
+        }
+
         public Voronoi(List<Vector2f> points, Rectf plotBounds)
         {
             if (weightDistributor == null)
