@@ -4,14 +4,12 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-using csDelaunay;
-
-namespace Tests
+namespace csDelaunay.Tests
 {
-    public class CorrectnessTest
+    public class VoronoiTest
     {
         [Test]
-        public void BoundsEqualityTest()
+        public void PlotBoundsEqualityTest()
         {
             Random.InitState(10);
             var points = CreateRandomPoints(50);
@@ -19,11 +17,11 @@ namespace Tests
 
             Rectf plotBounds = voronoi.PlotBounds;
 
-            voronoi.Redo(points, new Rectf(0, 0, 2, 2));
+            voronoi.Redo(points, TestBounds());
 
             Rectf plotBounds2 = voronoi.PlotBounds;
 
-            Debug.Log($"Plot bounds: {plotBounds.x}, { plotBounds.y}, { plotBounds.width}, {plotBounds.height}");
+            //Debug.Log($"Plot bounds: {plotBounds.x}, { plotBounds.y}, { plotBounds.width}, {plotBounds.height}");
 
             Assert.AreEqual(plotBounds.x, plotBounds2.x, "Plot bounds x not equal");
             Assert.AreEqual(plotBounds.y, plotBounds2.y, "Plot bounds y not equal");
@@ -45,7 +43,7 @@ namespace Tests
 
             Vector2f e1v1 = clippedEdge.ClippedEnds[0];
 
-            voronoi.Redo(points, new Rectf(0, 0, 2, 2));
+            voronoi.Redo(points, TestBounds());
 
             // first clipped edge
             Edge clippedEdge2 = GetFirstClippedEdge(voronoi);
@@ -116,6 +114,8 @@ namespace Tests
                 Assert.AreEqual(edges[i], edges2[i]);
             }
         }
+
+        
 
         [UnityTest]
         public IEnumerator SKIPFRAME()

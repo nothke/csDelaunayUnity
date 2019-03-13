@@ -5,9 +5,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.Profiling;
 
-using csDelaunay;
-
-namespace Tests
+namespace csDelaunay.Tests
 {
 
     public class EdgeReordererTest
@@ -17,8 +15,8 @@ namespace Tests
         {
             Profiler.BeginSample("Initing");
             Random.InitState(10);
-            var points = CorrectnessTest.CreateRandomPoints(50);
-            Voronoi voronoi = CorrectnessTest.TestVoronoi(points);
+            var points = VoronoiTest.CreateRandomPoints(50);
+            Voronoi voronoi = VoronoiTest.TestVoronoi(points);
             List<Edge> edges = voronoi.sites[0].Edges;
             Profiler.EndSample();
 
