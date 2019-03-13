@@ -8,7 +8,6 @@ namespace csDelaunay
 
     public class EdgeReorderer
     {
-        public List<Edge> Edges { get; private set; }
         public List<bool> EdgeOrientations { get; private set; }
 
         static EdgeReorderer instance;
@@ -31,26 +30,20 @@ namespace csDelaunay
 
         EdgeReorderer()
         {
-            Edges = new List<Edge>();//
-            EdgeOrientations = new List<bool>();
+            EdgeOrientations = new List<bool>(BUFFER_CAPACITY);
 
             newEdgesBuffer = new List<Edge>(BUFFER_CAPACITY);
             doneBuffer = new List<bool>(BUFFER_CAPACITY);
         }
 
-        [Obsolete("Use Get() instead")]
-        public EdgeReorderer(List<Edge> origEdges, Type criterion)
+        public static void Reorder(List<Edge> origEdges, Type criterion)
         {
-            Edges = new List<Edge>();
-            EdgeOrientations = new List<bool>();
-        }
-
-        public static void StaticReorder(List<Edge> origEdges, Type criterion)
-        {
+            Profiler.BeginSample("Reorder blah");
             Get();
 
             if (origEdges == null || origEdges.Count == 0)
                 return;
+            Profiler.EndSample();
 
             instance.ReorderEdges(origEdges, criterion);
 
@@ -61,36 +54,17 @@ namespace csDelaunay
             }
         }
 
-        [Obsolete]
-        public void Reorder(List<Edge> origEdges, Type criterion)
-        {
-            if (origEdges.Count > 0)
-            {
-                Edges = ReorderEdges(origEdges, criterion);
-
-                origEdges.Clear();
-            }
-        }
-
         public void Clear()
         {
-            Edges.Clear();
             EdgeOrientations.Clear();
 
             newEdgesBuffer.Clear();
             doneBuffer.Clear();
         }
 
-        /*
-        [Obsolete("Use Clear instead")]
-        public void Dispose()
+        void ReorderEdges(List<Edge> origEdges, Type criterion)
         {
-            Edges = null;
-            EdgeOrientations = null;
-        }*/
-
-        private List<Edge> ReorderEdges(List<Edge> origEdges, Type criterion)
-        {
+            Profiler.BeginSample("Reorder start");
             int i;
             int n = origEdges.Count;
             Edge edge;
@@ -106,6 +80,9 @@ namespace csDelaunay
             EdgeOrientations.Add(false); // extend alloc
             ICoord firstPoint;
             ICoord lastPoint;
+            Profiler.EndSample();
+
+            Profiler.BeginSample("Criterion search");
             if (criterion == typeof(Vertex))
             {
                 firstPoint = edge.LeftVertex;
@@ -116,16 +93,18 @@ namespace csDelaunay
                 firstPoint = edge.LeftSite;
                 lastPoint = edge.RightSite;
             }
+            Profiler.EndSample();
 
             if (firstPoint == Vertex.VERTEX_AT_INFINITY || lastPoint == Vertex.VERTEX_AT_INFINITY)
             {
                 UnityEngine.Debug.LogError("Puk");
-                return new List<Edge>(); // alloc
+                return;
             }
 
             doneBuffer[i] = true;
             nDone++;
 
+            Profiler.BeginSample("While");
             while (nDone < n)
             {
                 for (i = 1; i < n; i++)
@@ -150,7 +129,7 @@ namespace csDelaunay
                     if (leftPoint == Vertex.VERTEX_AT_INFINITY || rightPoint == Vertex.VERTEX_AT_INFINITY)
                     {
                         UnityEngine.Debug.LogError("Puk2");
-                        return new List<Edge>(); // alloc
+                        return;
                     }
                     if (leftPoint == lastPoint)
                     {
@@ -186,7 +165,7 @@ namespace csDelaunay
                     }
                 }
             }
-            return newEdgesBuffer;
+            Profiler.EndSample();
         }
     }
 }

@@ -310,7 +310,7 @@ namespace csDelaunay
         // alloc
         private void ReorderEdges()
         {
-            EdgeReorderer.StaticReorder(edges, typeof(Vertex));
+            EdgeReorderer.Reorder(edges, typeof(Vertex));
 
             /*
             EdgeReorderer reorderer = EdgeReorderer.Get(); //new EdgeReorderer(edges, typeof(Vertex));
