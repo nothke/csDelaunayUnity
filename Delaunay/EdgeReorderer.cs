@@ -16,7 +16,7 @@ namespace csDelaunay
         List<Edge> newEdgesBuffer;
         List<bool> doneBuffer;
 
-        public static EdgeReorderer Get()
+        public static void CreateInstance()
         {
             if (instance == null)
                 instance = new EdgeReorderer();
@@ -24,8 +24,6 @@ namespace csDelaunay
             {
                 instance.Clear();
             }
-
-            return instance;
         }
 
         EdgeReorderer()
@@ -38,12 +36,10 @@ namespace csDelaunay
 
         public static void Reorder(List<Edge> origEdges, Type criterion)
         {
-            Profiler.BeginSample("Reorder blah");
-            Get();
+            CreateInstance();
 
             if (origEdges == null || origEdges.Count == 0)
                 return;
-            Profiler.EndSample();
 
             instance.ReorderEdges(origEdges, criterion);
 
@@ -60,6 +56,11 @@ namespace csDelaunay
 
             newEdgesBuffer.Clear();
             doneBuffer.Clear();
+        }
+
+        public static string GetCapacities()
+        {
+            return $"EdgeOrientations: {instance.EdgeOrientations.Capacity}, newEdgesBuffer: {instance.newEdgesBuffer.Capacity}, doneBuffer: {instance.doneBuffer.Capacity}";
         }
 
         void ReorderEdges(List<Edge> origEdges, Type criterion)
