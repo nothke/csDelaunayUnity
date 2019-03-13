@@ -96,5 +96,32 @@ namespace csDelaunay.Tests
 
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator RedoRandom20TimesWith3000PointsTest()
+        {
+            Voronoi.FlushPools();
+            Voronoi.InitPools(12500, 9000, 40, 11000);
+
+            var points = VoronoiTest.CreateRandomPoints(3000);
+
+            Voronoi voronoi = VoronoiTest.TestVoronoi(points);
+
+            yield return null;
+
+            for (int i = 0; i < 20; i++)
+            {
+                points = VoronoiTest.CreateRandomPoints(3000);
+
+                Profiler.BeginSample("NoGC Voronoi.Redo 20x3000 random points");
+                voronoi.Redo(points, VoronoiTest.TestBounds());
+                Profiler.EndSample();
+                yield return null;
+            }
+
+            Debug.Log(voronoi.DebugCapacities());
+
+            yield return null;
+        }
     }
 }
