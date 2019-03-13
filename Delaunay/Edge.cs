@@ -46,7 +46,7 @@ namespace csDelaunay
                 if (!all[i].disposed)
                 {
                     all[i].Dispose();
-                    UnityEngine.Debug.Log("Found undisposed Edge");
+                    //UnityEngine.Debug.Log("Found undisposed Edge");
                 }
             }
         }
