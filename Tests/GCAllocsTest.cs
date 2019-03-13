@@ -27,9 +27,6 @@ namespace csDelaunay.Tests
             yield return null;
 
             Voronoi voronoi = VoronoiTest.TestVoronoi(points);
-            Profiler.BeginSample("First Voronoi.Redo, alloc expected");
-            voronoi.Redo(points, VoronoiTest.TestBounds());
-            Profiler.EndSample();
 
             yield return null;
 
@@ -55,9 +52,6 @@ namespace csDelaunay.Tests
             var points = VoronoiTest.CreateRandomPoints(50);
 
             Voronoi voronoi = VoronoiTest.TestVoronoi(points);
-            Profiler.BeginSample("First Voronoi.Redo, alloc expected");
-            voronoi.Redo(points, VoronoiTest.TestBounds());
-            Profiler.EndSample();
 
             yield return null;
 
@@ -85,8 +79,6 @@ namespace csDelaunay.Tests
             var points = VoronoiTest.CreateRandomPoints(200);
 
             Voronoi voronoi = VoronoiTest.TestVoronoi(points);
-            // First redo GC expected
-            voronoi.Redo(points, VoronoiTest.TestBounds());
 
             yield return null;
 
