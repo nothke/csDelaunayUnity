@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 
 namespace csDelaunay
 {
@@ -10,21 +11,83 @@ namespace csDelaunay
         public List<Edge> Edges { get; private set; }
         public List<bool> EdgeOrientations { get; private set; }
 
+        static EdgeReorderer instance;
+        const int BUFFER_CAPACITY = 64;
+
+        List<Edge> newEdgesBuffer;
+        List<bool> doneBuffer;
+
+        public static EdgeReorderer Get()
+        {
+            if (instance == null)
+                instance = new EdgeReorderer();
+            else
+            {
+                instance.Clear();
+            }
+
+            return instance;
+        }
+
+        EdgeReorderer()
+        {
+            Edges = new List<Edge>();//
+            EdgeOrientations = new List<bool>();
+
+            newEdgesBuffer = new List<Edge>(BUFFER_CAPACITY);
+            doneBuffer = new List<bool>(BUFFER_CAPACITY);
+        }
+
+        [Obsolete("Use Get() instead")]
         public EdgeReorderer(List<Edge> origEdges, Type criterion)
         {
             Edges = new List<Edge>();
             EdgeOrientations = new List<bool>();
-            if (origEdges.Count > 0)
+        }
+
+        public static void StaticReorder(List<Edge> origEdges, Type criterion)
+        {
+            Get();
+
+            if (origEdges == null || origEdges.Count == 0)
+                return;
+
+            instance.ReorderEdges(origEdges, criterion);
+
+            origEdges.Clear();
+            for (int i = 0; i < instance.newEdgesBuffer.Count; i++)
             {
-                Edges = ReorderEdges(origEdges, criterion);
+                origEdges.Add(instance.newEdgesBuffer[i]);
             }
         }
 
+        [Obsolete]
+        public void Reorder(List<Edge> origEdges, Type criterion)
+        {
+            if (origEdges.Count > 0)
+            {
+                Edges = ReorderEdges(origEdges, criterion);
+
+                origEdges.Clear();
+            }
+        }
+
+        public void Clear()
+        {
+            Edges.Clear();
+            EdgeOrientations.Clear();
+
+            newEdgesBuffer.Clear();
+            doneBuffer.Clear();
+        }
+
+        /*
+        [Obsolete("Use Clear instead")]
         public void Dispose()
         {
             Edges = null;
             EdgeOrientations = null;
-        }
+        }*/
 
         private List<Edge> ReorderEdges(List<Edge> origEdges, Type criterion)
         {
@@ -32,15 +95,15 @@ namespace csDelaunay
             int n = origEdges.Count;
             Edge edge;
             // We're going to reorder the edges in order of traversal
-            List<bool> done = new List<bool>();
+            //List<bool> done = new List<bool>(); // alloc
             int nDone = 0;
-            for (int b = 0; b < n; b++) done.Add(false);
-            List<Edge> newEdges = new List<Edge>();
+            for (int b = 0; b < n; b++) doneBuffer.Add(false);
+            //List<Edge> newEdges = new List<Edge>(); // alloc
 
             i = 0;
             edge = origEdges[i];
-            newEdges.Add(edge);
-            EdgeOrientations.Add(false);
+            newEdgesBuffer.Add(edge); // extend alloc
+            EdgeOrientations.Add(false); // extend alloc
             ICoord firstPoint;
             ICoord lastPoint;
             if (criterion == typeof(Vertex))
@@ -56,17 +119,18 @@ namespace csDelaunay
 
             if (firstPoint == Vertex.VERTEX_AT_INFINITY || lastPoint == Vertex.VERTEX_AT_INFINITY)
             {
-                return new List<Edge>();
+                UnityEngine.Debug.LogError("Puk");
+                return new List<Edge>(); // alloc
             }
 
-            done[i] = true;
+            doneBuffer[i] = true;
             nDone++;
 
             while (nDone < n)
             {
                 for (i = 1; i < n; i++)
                 {
-                    if (done[i])
+                    if (doneBuffer[i])
                     {
                         continue;
                     }
@@ -85,43 +149,44 @@ namespace csDelaunay
                     }
                     if (leftPoint == Vertex.VERTEX_AT_INFINITY || rightPoint == Vertex.VERTEX_AT_INFINITY)
                     {
-                        return new List<Edge>();
+                        UnityEngine.Debug.LogError("Puk2");
+                        return new List<Edge>(); // alloc
                     }
                     if (leftPoint == lastPoint)
                     {
                         lastPoint = rightPoint;
-                        EdgeOrientations.Add(false);
-                        newEdges.Add(edge);
-                        done[i] = true;
+                        EdgeOrientations.Add(false); // extend alloc
+                        newEdgesBuffer.Add(edge); // extend alloc
+                        doneBuffer[i] = true;
                     }
                     else if (rightPoint == firstPoint)
                     {
                         firstPoint = leftPoint;
-                        EdgeOrientations.Insert(0, false);
-                        newEdges.Insert(0, edge);
-                        done[i] = true;
+                        EdgeOrientations.Insert(0, false); // extend alloc
+                        newEdgesBuffer.Insert(0, edge); // extend alloc
+                        doneBuffer[i] = true;
                     }
                     else if (leftPoint == firstPoint)
                     {
                         firstPoint = rightPoint;
-                        EdgeOrientations.Insert(0, true);
-                        newEdges.Insert(0, edge);
-                        done[i] = true;
+                        EdgeOrientations.Insert(0, true); // extend alloc
+                        newEdgesBuffer.Insert(0, edge); // extend alloc
+                        doneBuffer[i] = true;
                     }
                     else if (rightPoint == lastPoint)
                     {
                         lastPoint = leftPoint;
-                        EdgeOrientations.Add(true);
-                        newEdges.Add(edge);
-                        done[i] = true;
+                        EdgeOrientations.Add(true); // extend alloc
+                        newEdgesBuffer.Add(edge); // extend alloc
+                        doneBuffer[i] = true;
                     }
-                    if (done[i])
+                    if (doneBuffer[i])
                     {
                         nDone++;
                     }
                 }
             }
-            return newEdges;
+            return newEdgesBuffer;
         }
     }
 }
