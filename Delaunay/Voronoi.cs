@@ -95,6 +95,8 @@ namespace csDelaunay
                 weightDistributor = new Random();
 
             Init(points, plotBounds);
+            Clear();
+            Init(points, plotBounds);
         }
 
         public void Redo(List<Vector2f> points, Rectf plotBounds)
