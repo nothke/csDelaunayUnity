@@ -7,27 +7,23 @@ namespace csDelaunay
 
     public class EdgeReorderer
     {
-
-        private List<Edge> edges;
-        private List<bool> edgeOrientations;
-
-        public List<Edge> Edges { get { return edges; } }
-        public List<bool> EdgeOrientations { get { return edgeOrientations; } }
+        public List<Edge> Edges { get; private set; }
+        public List<bool> EdgeOrientations { get; private set; }
 
         public EdgeReorderer(List<Edge> origEdges, Type criterion)
         {
-            edges = new List<Edge>();
-            edgeOrientations = new List<bool>();
+            Edges = new List<Edge>();
+            EdgeOrientations = new List<bool>();
             if (origEdges.Count > 0)
             {
-                edges = ReorderEdges(origEdges, criterion);
+                Edges = ReorderEdges(origEdges, criterion);
             }
         }
 
         public void Dispose()
         {
-            edges = null;
-            edgeOrientations = null;
+            Edges = null;
+            EdgeOrientations = null;
         }
 
         private List<Edge> ReorderEdges(List<Edge> origEdges, Type criterion)
@@ -44,7 +40,7 @@ namespace csDelaunay
             i = 0;
             edge = origEdges[i];
             newEdges.Add(edge);
-            edgeOrientations.Add(false);
+            EdgeOrientations.Add(false);
             ICoord firstPoint;
             ICoord lastPoint;
             if (criterion == typeof(Vertex))
@@ -94,28 +90,28 @@ namespace csDelaunay
                     if (leftPoint == lastPoint)
                     {
                         lastPoint = rightPoint;
-                        edgeOrientations.Add(false);
+                        EdgeOrientations.Add(false);
                         newEdges.Add(edge);
                         done[i] = true;
                     }
                     else if (rightPoint == firstPoint)
                     {
                         firstPoint = leftPoint;
-                        edgeOrientations.Insert(0, false);
+                        EdgeOrientations.Insert(0, false);
                         newEdges.Insert(0, edge);
                         done[i] = true;
                     }
                     else if (leftPoint == firstPoint)
                     {
                         firstPoint = rightPoint;
-                        edgeOrientations.Insert(0, true);
+                        EdgeOrientations.Insert(0, true);
                         newEdges.Insert(0, edge);
                         done[i] = true;
                     }
                     else if (rightPoint == lastPoint)
                     {
                         lastPoint = leftPoint;
-                        edgeOrientations.Add(true);
+                        EdgeOrientations.Add(true);
                         newEdges.Add(edge);
                         done[i] = true;
                     }
