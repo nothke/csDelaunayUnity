@@ -6,10 +6,10 @@ using UnityEngine.TestTools;
 
 namespace csDelaunay.Tests
 {
-    public class TimeTest
+    public class CapacityTest
     {
         [Test]
-        public void Nodes_100_Test()
+        public void _100_PointsTest()
         {
             Voronoi.FlushPools();
 
@@ -20,7 +20,7 @@ namespace csDelaunay.Tests
         }
 
         [Test]
-        public void Nodes_400_Test()
+        public void _400_PointsTest()
         {
             Voronoi.FlushPools();
 
@@ -31,7 +31,7 @@ namespace csDelaunay.Tests
         }
 
         [Test]
-        public void Nodes_1000_Test()
+        public void _1000_PointsTest()
         {
             Voronoi.FlushPools();
 
@@ -42,7 +42,7 @@ namespace csDelaunay.Tests
         }
 
         [Test]
-        public void Nodes_2000_Test()
+        public void _2000_PointsTest()
         {
             Voronoi.FlushPools();
 
@@ -53,7 +53,7 @@ namespace csDelaunay.Tests
         }
 
         [Test]
-        public void Nodes_10000_Test()
+        public void _10000_Points_Test()
         {
             Voronoi.FlushPools();
 
