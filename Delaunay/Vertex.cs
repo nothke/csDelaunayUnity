@@ -20,6 +20,26 @@ namespace csDelaunay
 
         #region Pool
         private static Queue<Vertex> unusedPool = new Queue<Vertex>();
+        public static int PoolCapacity { get => unusedPool.Count; }
+
+        public static void PoolDummies(int num)
+        {
+            var dummies = new Vertex[num];
+            for (int i = 0; i < num; i++)
+            {
+                dummies[i] = Create(0, 0);
+            }
+
+            for (int i = 0; i < num; i++)
+            {
+                dummies[i].Dispose();
+            }
+        }
+
+        public static void FlushUnused()
+        {
+            unusedPool = new Queue<Vertex>();
+        }
 
         private static Vertex Create(float x, float y)
         {

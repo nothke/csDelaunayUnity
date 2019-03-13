@@ -20,7 +20,7 @@ namespace csDelaunay.Tests
         public IEnumerator RedoSame20TimesNoGCAllocsTest()
         {
             Voronoi.FlushPools();
-            Voronoi.InitPools(500, 500, 100);
+            Voronoi.InitPools(500, 500, 40, 200);
 
             var points = VoronoiTest.CreateRandomPoints(50);
 
@@ -32,11 +32,13 @@ namespace csDelaunay.Tests
 
             for (int i = 0; i < 20; i++)
             {
-                UnityEngine.Profiling.Profiler.BeginSample("NoGC Voronoi.Redo same points");
+                Profiler.BeginSample("NoGC Voronoi.Redo same points");
                 voronoi.Redo(points, VoronoiTest.TestBounds());
-                UnityEngine.Profiling.Profiler.EndSample();
+                Profiler.EndSample();
                 yield return null;
             }
+
+            Debug.Log(voronoi.DebugCapacities());
 
             yield return null;
         }
@@ -45,7 +47,7 @@ namespace csDelaunay.Tests
         public IEnumerator RedoRandom20TimesNoGCAllocsTest()
         {
             Voronoi.FlushPools();
-            Voronoi.InitPools(500, 500, 100);
+            Voronoi.InitPools(500, 500, 40, 200);
 
             var points = VoronoiTest.CreateRandomPoints(50);
 
@@ -59,11 +61,42 @@ namespace csDelaunay.Tests
             {
                 points = VoronoiTest.CreateRandomPoints(50);
 
-                UnityEngine.Profiling.Profiler.BeginSample("NoGC Voronoi.Redo random points");
+                Profiler.BeginSample("NoGC Voronoi.Redo 20x50 random points");
                 voronoi.Redo(points, VoronoiTest.TestBounds());
-                UnityEngine.Profiling.Profiler.EndSample();
+                Profiler.EndSample();
                 yield return null;
             }
+
+            Debug.Log(voronoi.DebugCapacities());
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator RedoRandom200TimesWith200PointsTest()
+        {
+            Voronoi.FlushPools();
+            Voronoi.InitPools(900, 600, 40, 800);
+
+            var points = VoronoiTest.CreateRandomPoints(200);
+
+            Voronoi voronoi = VoronoiTest.TestVoronoi(points);
+            // First redo GC expected
+            voronoi.Redo(points, VoronoiTest.TestBounds());
+
+            yield return null;
+
+            for (int i = 0; i < 200; i++)
+            {
+                points = VoronoiTest.CreateRandomPoints(200);
+
+                Profiler.BeginSample("NoGC Voronoi.Redo 200x200 random points");
+                voronoi.Redo(points, VoronoiTest.TestBounds());
+                Profiler.EndSample();
+                yield return null;
+            }
+
+            Debug.Log(voronoi.DebugCapacities());
 
             yield return null;
         }

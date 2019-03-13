@@ -73,11 +73,12 @@ namespace csDelaunay
             //SitesIndexedByLocation = null;
         }
 
-        public static void InitPools(int halfEdgePoolCapacity, int edgePoolCapacity, int edgesPerSiteCapacity)
+        public static void InitPools(int halfEdgePoolCapacity, int edgePoolCapacity, int edgesPerSiteCapacity, int vertexPoolCapacity)
         {
             Halfedge.PoolDummies(halfEdgePoolCapacity);
             Edge.PoolDummies(edgePoolCapacity);
             Site.edgesCapacity = edgesPerSiteCapacity;
+            Vertex.PoolDummies(vertexPoolCapacity);
         }
 
         public static void FlushPools()
@@ -85,6 +86,7 @@ namespace csDelaunay
             Halfedge.FlushUnused();
             Edge.FlushUnused();
             Site.FlushUnused();
+            Vertex.FlushUnused();
         }
 
         public Voronoi(List<Vector2f> points, Rectf plotBounds)
@@ -111,7 +113,7 @@ namespace csDelaunay
         public string DebugCapacities()
         {
             int edgePerSite = Site.GetMaxEdgeCapacity(sites);
-            return $"Sites: {sites.Count}, Halfedges: {Halfedge.PoolCapacity}, Edges: {Edge.PoolCapacity}, EdgesPerSite: {edgePerSite}";
+            return $"Sites: {sites.Count}, Halfedges: {Halfedge.PoolCapacity}, Edges: {Edge.PoolCapacity}, EdgesPerSite: {edgePerSite}, Vertices: {Vertex.PoolCapacity}";
         }
 
         private void Init(List<Vector2f> points, Rectf plotBounds)
