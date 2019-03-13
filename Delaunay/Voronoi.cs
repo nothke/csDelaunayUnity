@@ -144,6 +144,22 @@ namespace csDelaunay
             FortunesAlgorithm();
         }
 
+        public void GetAllClippedLines(List<Vector2f> lines)
+        {
+            lines.Clear();
+
+            foreach (var edge in Edges)
+            {
+                if (!edge.Clipped) continue;
+
+                var p1 = edge.ClippedEnds[0];
+                var p2 = edge.ClippedEnds[1];
+
+                lines.Add(p1);
+                lines.Add(p2);
+            }
+        }
+
         #region Unused Publics
 
         /*
