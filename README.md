@@ -8,7 +8,8 @@ This version has breaking changes between the original, so it is not necesarily 
 
 ## How to use alloc free
 To make sure the code runs alloc-free you must initialize element pools with capacities suited to your [maximum] number of sites. This process is not required, but every time the lists and queues get extended, you will have a GC alloc, which is recommended to avoid. 
-In current version, Voronoi.Redo() is only guarnteed to be alloc free with a fixed number of sites
+
+In the current version, Voronoi.Redo() is only guarnteed to be alloc free with a fixed number of sites
 #### 1. Analyse capacities
 You can find out the required capacities by creating a test voronoi diagram and rebuilding it many times. At the end call `voronoi.DebugCapacities()`, for example:
 To make the code run alloc-free you must initialize element pools with capacities suited to your [maximum] number of sites. You can find out the required capacities by creating a test voronoi diagram and rebuild it many times, at the end call `voronoi.DebugCapacities()` like so:
