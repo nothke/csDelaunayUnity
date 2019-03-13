@@ -265,7 +265,7 @@ namespace csDelaunay
             }
             if (edgeOrientations == null)
             {
-                ReorderEdges();
+                ReorderEdges(); // alloc
             }
             List<Site> list = new List<Site>();
             foreach (Edge edge in edges)
@@ -288,6 +288,7 @@ namespace csDelaunay
             return null;
         }
 
+        // alloc
         public List<Vector2f> Region(Rectf clippingBounds)
         {
             if (edges == null || edges.Count == 0)
@@ -296,7 +297,7 @@ namespace csDelaunay
             }
             if (edgeOrientations == null)
             {
-                ReorderEdges();
+                ReorderEdges(); // alloc
                 region = ClipToBounds(clippingBounds);
                 if ((new Polygon(region)).PolyWinding() == Winding.CLOCKWISE)
                 {
@@ -306,6 +307,7 @@ namespace csDelaunay
             return region;
         }
 
+        // alloc
         private void ReorderEdges()
         {
             EdgeReorderer reorderer = new EdgeReorderer(edges, typeof(Vertex));
@@ -314,6 +316,7 @@ namespace csDelaunay
             reorderer.Dispose();
         }
 
+        // alloc
         private List<Vector2f> ClipToBounds(Rectf bounds)
         {
             List<Vector2f> points = new List<Vector2f>();
