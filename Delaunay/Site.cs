@@ -183,7 +183,9 @@ namespace csDelaunay
             else
                 edges.Clear();
 
-            region = null;
+            if (region != null)
+                region.Clear();
+            //region = null;
 
             return this;
         }
@@ -237,9 +239,16 @@ namespace csDelaunay
             }
         }
 
+        int prevCapacity;
+
         public void AddEdge(Edge edge)
         {
             edges.Add(edge);
+
+            if (edges.Capacity != prevCapacity)
+                UnityEngine.Debug.Log($"Capacity got extended from {prevCapacity} to {edges.Capacity}");
+
+            prevCapacity = edges.Capacity;
         }
 
         public Edge NearestEdge()
