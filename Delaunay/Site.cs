@@ -45,7 +45,7 @@ namespace csDelaunay
                 //currentIndex = 0;
             }*/
 
-            Site.SortSites(sites); // always sort
+            SortSites(sites); // always sort
 
             float xmin, xmax, ymin, ymax;
 
@@ -193,6 +193,12 @@ namespace csDelaunay
             else
                 edges.Clear();
 
+            // used for regions:
+            if (edgeOrientations == null)
+                edgeOrientations = new List<bool>(edgesCapacity);
+            else
+                edges.Clear();
+
             if (region != null)
                 region.Clear();
             //region = null;
@@ -271,6 +277,7 @@ namespace csDelaunay
             return edges[0];
         }
 
+        // Not correct!
         public List<Site> NeighborSites()
         {
             if (edges == null || edges.Count == 0)
@@ -306,25 +313,21 @@ namespace csDelaunay
         public List<Vector2f> Region(Rectf clippingBounds)
         {
             if (edges == null || edges.Count == 0)
-            {
-                return new List<Vector2f>();
-            }
-            if (edgeOrientations == null)
-            {
-                ReorderEdges(); // alloc
-                region = ClipToBounds(clippingBounds);
-                if ((new Polygon(region)).PolyWinding() == Winding.CLOCKWISE)
-                {
-                    region.Reverse();
-                }
-            }
+                return null;
+
+            ReorderEdges();
+
+            region = ClipToBounds(clippingBounds); // alloc
+
+            if ((new Polygon(region)).PolyWinding() == Winding.CLOCKWISE) // alloc
+                region.Reverse();
+
             return region;
         }
 
-        // alloc
         private void ReorderEdges()
         {
-            EdgeReorderer.Reorder(edges, typeof(Vertex));
+            EdgeReorderer.Reorder(ref edges, ref edgeOrientations, typeof(Vertex));
 
             /*
             EdgeReorderer reorderer = EdgeReorderer.Get(); //new EdgeReorderer(edges, typeof(Vertex));
@@ -352,7 +355,14 @@ namespace csDelaunay
                 return new List<Vector2f>();
             }
             edge = edges[i];
+
+            UnityEngine.Debug.Assert(edgeOrientations != null, "Edge orientations is null");
+
             bool orientation = edgeOrientations[i];
+
+            if (!edge.Clipped)
+                UnityEngine.Debug.LogError("Edge is not clipped!");
+
             points.Add(edge.ClippedEnds[orientation ? 1 : 0]);
             points.Add(edge.ClippedEnds[!orientation ? 1 : 0]);
 

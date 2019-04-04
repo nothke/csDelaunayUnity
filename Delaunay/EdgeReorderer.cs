@@ -34,7 +34,7 @@ namespace csDelaunay
             doneBuffer = new List<bool>(BUFFER_CAPACITY);
         }
 
-        public static void Reorder(List<Edge> origEdges, Type criterion)
+        public static void Reorder(ref List<Edge> origEdges, ref List<bool> edgeOrientations, Type criterion)
         {
             CreateInstance();
 
@@ -45,9 +45,12 @@ namespace csDelaunay
 
             origEdges.Clear();
             for (int i = 0; i < instance.newEdgesBuffer.Count; i++)
-            {
                 origEdges.Add(instance.newEdgesBuffer[i]);
-            }
+
+            // Copy EdgeOrientations to edgeOrientations
+            edgeOrientations.Clear();
+            for (int i = 0; i < instance.EdgeOrientations.Count; i++)
+                edgeOrientations.Add(instance.EdgeOrientations[i]);
         }
 
         public void Clear()

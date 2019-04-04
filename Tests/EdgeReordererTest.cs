@@ -18,6 +18,7 @@ namespace csDelaunay.Tests
             var points = VoronoiTest.CreateRandomPoints(50);
             Voronoi voronoi = VoronoiTest.TestVoronoi(points);
             List<Edge> edges = voronoi.sites[0].Edges;
+            List<bool> edgeOrientations = new List<bool>(edges.Count);
             Profiler.EndSample();
 
             //var reorderedEdges = er.Edges;
@@ -33,13 +34,13 @@ namespace csDelaunay.Tests
             yield return null;
 
             Profiler.BeginSample("First EdgeReorderer reorder");
-            EdgeReorderer.Reorder(edges, typeof(Vertex));
+            EdgeReorderer.Reorder(ref edges, ref edgeOrientations, typeof(Vertex));
             Profiler.EndSample();
 
             yield return null;
 
             Profiler.BeginSample("NoGC EdgeReorderer reorder");
-            EdgeReorderer.Reorder(edges, typeof(Vertex));
+            EdgeReorderer.Reorder(ref edges, ref edgeOrientations, typeof(Vertex));
             Profiler.EndSample();
 
             yield return null;
@@ -48,7 +49,7 @@ namespace csDelaunay.Tests
             edges.AddRange(originalEdges);
 
             Profiler.BeginSample("NoGC EdgeReorder another reorder");
-            EdgeReorderer.Reorder(edges, typeof(Vertex));
+            EdgeReorderer.Reorder(ref edges, ref edgeOrientations, typeof(Vertex));
             Profiler.EndSample();
 
             yield return null;
