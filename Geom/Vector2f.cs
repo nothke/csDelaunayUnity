@@ -1,7 +1,8 @@
 ﻿using System;
 
 // Recreation of the UnityEngine.Vector3, so it can be used in other thread
-public struct Vector2f {
+public struct Vector2f : IEquatable<Vector2f>
+{
 	
 	public float x, y;
 	
@@ -94,4 +95,10 @@ public struct Vector2f {
 	public static Vector2f Max(Vector2f a, Vector2f b) {
 		return new Vector2f(Math.Max(a.x, b.x), Math.Max(a.y, b.y));
 	}
+
+    public bool Equals(Vector2f other)
+    {
+        return x == other.x &&
+            y == other.y;
+    }
 }
