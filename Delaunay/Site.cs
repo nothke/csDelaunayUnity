@@ -309,8 +309,7 @@ namespace csDelaunay
             }
             return null;
         }
-
-        // alloc
+        
         public List<Vector2f> Region(Rectf clippingBounds)
         {
             if (edges == null || edges.Count == 0)
@@ -335,12 +334,6 @@ namespace csDelaunay
         private void ReorderEdges()
         {
             EdgeReorderer.Reorder(ref edges, ref edgeOrientations, typeof(Vertex));
-
-            /*
-            EdgeReorderer reorderer = EdgeReorderer.Get(); //new EdgeReorderer(edges, typeof(Vertex));
-            edges = reorderer.Edges;
-            edgeOrientations = reorderer.EdgeOrientations;
-            reorderer.Clear(); //reorderer.Dispose();*/
         }
 
         void BuildRegionNoClip()
@@ -357,7 +350,6 @@ namespace csDelaunay
             {
                 if (!edges[e].Clipped)
                 {
-                    //throw new Exception("Requested Site region is not clipped");
                     //UnityEngine.Debug.Log("Site region is not clipped");
                     return;
                 }
