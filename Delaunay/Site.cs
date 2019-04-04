@@ -200,7 +200,7 @@ namespace csDelaunay
                 edges.Clear();
 
             if (region == null)
-                region = new List<Vector2f>(edgesCapacity + 1);
+                region = new List<Vector2f>(edgesCapacity * 2);
             else
                 region.Clear();
 
@@ -316,9 +316,13 @@ namespace csDelaunay
             if (edges == null || edges.Count == 0)
                 return null;
 
+            Profiler.BeginSample("Reordering");
             ReorderEdges();
+            Profiler.EndSample();
 
+            Profiler.BeginSample("Building region");
             BuildRegionNoClip();
+            Profiler.EndSample();
 
             //region = ClipToBounds(clippingBounds); // alloc
 
@@ -345,7 +349,7 @@ namespace csDelaunay
 
             if (edges.Count == 0)
             {
-                UnityEngine.Debug.Log("Site has not edges");
+                UnityEngine.Debug.Log("Site has no edges");
                 return;
             }
 
@@ -369,9 +373,16 @@ namespace csDelaunay
                 if (!edge.Clipped)
                     UnityEngine.Debug.LogError("Edge is not clipped!");
 
-                region.Add(edge.ClippedEnds[orientation ? 1 : 0]);
-                region.Add(edge.ClippedEnds[!orientation ? 1 : 0]);
+                Vector2f end1 = edge.ClippedEnds[orientation ? 1 : 0];
+                Vector2f end2 = edge.ClippedEnds[!orientation ? 1 : 0];
+
+                Profiler.BeginSample("Adding ends");
+                region.Add(end1);
+                region.Add(end2);
+                Profiler.EndSample();
             }
+
+            //UnityEngine.Debug.Log($"{region.Count}, {region.Capacity}");
         }
 
         // alloc
