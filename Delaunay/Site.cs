@@ -199,9 +199,10 @@ namespace csDelaunay
             else
                 edges.Clear();
 
-            if (region != null)
+            if (region == null)
+                region = new List<Vector2f>(edgesCapacity + 1);
+            else
                 region.Clear();
-            //region = null;
 
             return this;
         }
@@ -317,10 +318,12 @@ namespace csDelaunay
 
             ReorderEdges();
 
-            region = ClipToBounds(clippingBounds); // alloc
+            BuildRegionNoClip();
 
-            if ((new Polygon(region)).PolyWinding() == Winding.CLOCKWISE) // alloc
-                region.Reverse();
+            //region = ClipToBounds(clippingBounds); // alloc
+
+            //if ((new Polygon(region)).PolyWinding() == Winding.CLOCKWISE) // alloc
+            //region.Reverse();
 
             return region;
         }
@@ -334,6 +337,41 @@ namespace csDelaunay
             edges = reorderer.Edges;
             edgeOrientations = reorderer.EdgeOrientations;
             reorderer.Clear(); //reorderer.Dispose();*/
+        }
+
+        void BuildRegionNoClip()
+        {
+            region.Clear();
+
+            if (edges.Count == 0)
+            {
+                UnityEngine.Debug.Log("Site has not edges");
+                return;
+            }
+
+            for (int e = 0; e < edges.Count; e++)
+            {
+                if (!edges[e].Clipped)
+                {
+                    //throw new Exception("Requested Site region is not clipped");
+                    //UnityEngine.Debug.Log("Site region is not clipped");
+                    return;
+                }
+            }
+
+            UnityEngine.Debug.Assert(edgeOrientations != null, "Edge orientations is null");
+
+            for (int i = 0; i < edges.Count; i++)
+            {
+                Edge edge = edges[i];
+                bool orientation = edgeOrientations[i];
+
+                if (!edge.Clipped)
+                    UnityEngine.Debug.LogError("Edge is not clipped!");
+
+                region.Add(edge.ClippedEnds[orientation ? 1 : 0]);
+                region.Add(edge.ClippedEnds[!orientation ? 1 : 0]);
+            }
         }
 
         // alloc
