@@ -260,12 +260,14 @@ namespace csDelaunay
 		 * within the bounds. If no part of the Edge falls within the bounds, leave clippedVertices null
 		 * @param bounds
 		 */
-        public void ClipVertices(Rectf bounds)
+        public void ClipVertices(Rectf bounds, bool cullIfIntersectsBounds = false)
         {
             float xmin = bounds.x;
             float ymin = bounds.y;
             float xmax = bounds.right;
             float ymax = bounds.bottom;
+
+
 
             Vertex vertex0, vertex1;
             float x0, x1, y0, y1;
@@ -382,6 +384,15 @@ namespace csDelaunay
                     y1 = ymin;
                     x1 = (c - y1) / a;
                 }
+            }
+
+            if (cullIfIntersectsBounds)
+            {
+                if (x0 <= xmin || x0 >= xmax) return;
+                if (y0 <= ymin || y0 >= ymax) return;
+
+                if (x1 <= xmin || x1 >= xmax) return;
+                if (y1 <= ymin || y1 >= ymax) return;
             }
 
             Clipped = true;

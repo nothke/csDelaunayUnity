@@ -519,7 +519,7 @@ namespace csDelaunay
             // we need the vertices to clip the edges
             for (int i = 0; i < Edges.Count; i++)
             {
-                Edges[i].ClipVertices(PlotBounds); // MASSIVE alloc
+                Edges[i].ClipVertices(PlotBounds, true);
             }
             Profiler.EndSample();
 
