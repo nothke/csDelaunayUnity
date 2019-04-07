@@ -272,6 +272,14 @@ namespace csDelaunay
 #endif
         }
 
+        public void RemoveEdge(Edge edge)
+        {
+            if (!edges.Contains(edge))
+                throw new Exception("Edge not part of the site");
+
+            edges.Remove(edge);
+        }
+
         public Edge NearestEdge()
         {
             edges.Sort(Edge.CompareSitesDistances);
@@ -309,7 +317,7 @@ namespace csDelaunay
             }
             return null;
         }
-        
+
         public List<Vector2f> Region(Rectf clippingBounds)
         {
             if (edges == null || edges.Count == 0)
