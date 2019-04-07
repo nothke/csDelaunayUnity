@@ -408,6 +408,14 @@ namespace csDelaunay
                 ClippedEnds[0] = new Vector2f(x1, y1);
             }
         }
+
+        public void ResetClippedPositionsFromVertices()
+        {
+            if (!Clipped) return;
+
+            ClippedEnds[0] = LeftVertex.Coord;
+            ClippedEnds[1] = RightVertex.Coord;
+        }
         #endregion
     }
 }
