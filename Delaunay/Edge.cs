@@ -162,9 +162,9 @@ namespace csDelaunay
             return leftRight == false ? LeftVertex : RightVertex;
         }
 
-        public void SetVertex(bool leftRight, Vertex v)
+        public void SetVertex(bool right, Vertex v)
         {
-            if (leftRight == false)
+            if (right == false)
             {
                 LeftVertex = v;
             }
