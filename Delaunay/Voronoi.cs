@@ -20,6 +20,8 @@ namespace csDelaunay
         public Rectf PlotBounds { get; private set; }
         public Dictionary<Vector2f, Site> SitesIndexedByLocation { get; private set; }
 
+        public bool disposeVerticesManually = false;
+
         private Random weightDistributor;
 
         public void Clear()
@@ -73,6 +75,18 @@ namespace csDelaunay
             //SitesIndexedByLocation = null;
         }
 
+        /// <summary>
+        /// Call this after running Redo if disposeVerticesManually is set to true
+        /// </summary>
+        public void DisposeVertices()
+        {
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                vertices[i].Dispose();
+            }
+            vertices.Clear();
+        }
+
         public static void InitPools(int halfEdgePoolCapacity, int edgePoolCapacity, int edgesPerSiteCapacity, int vertexPoolCapacity)
         {
             Halfedge.PoolDummies(halfEdgePoolCapacity);
@@ -89,10 +103,12 @@ namespace csDelaunay
             Vertex.FlushUnused();
         }
 
-        public Voronoi(List<Vector2f> points, Rectf plotBounds)
+        public Voronoi(List<Vector2f> points, Rectf plotBounds, bool _disposeVerticesManually = false)
         {
             if (weightDistributor == null)
                 weightDistributor = new Random();
+
+            disposeVerticesManually = _disposeVerticesManually;
 
             Init(points, plotBounds);
             Clear();
@@ -523,14 +539,14 @@ namespace csDelaunay
             }
             Profiler.EndSample();
 
-            Profiler.BeginSample("Vertices dispose");
             // But we don't actually ever use them again!
-            for (int i = 0; i < vertices.Count; i++)
+            if (!disposeVerticesManually)
             {
-                vertices[i].Dispose();
+                Profiler.BeginSample("Vertices dispose");
+                DisposeVertices();
+                Profiler.EndSample();
+                UnityEngine.Debug.Log("Disposing vertices!");
             }
-            vertices.Clear();
-            Profiler.EndSample();
 
             /*
             UnityEngine.Debug.Assert(Halfedge.unusedPool.Contains(lbnd), "lbnd");
