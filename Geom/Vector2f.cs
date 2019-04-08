@@ -92,6 +92,10 @@ public struct Vector2f : IEquatable<Vector2f>
     public static Vector2f operator *(Vector2f a, float scalar) { 
         return new Vector2f(a.x * scalar, a.y * scalar);
     }
+
+    public static Vector2f operator /(Vector2f a, float scalar) {
+        return new Vector2f(a.x / scalar, a.y / scalar);
+    }
 	
 	public static Vector2f Min(Vector2f a, Vector2f b) {
 		return new Vector2f(Math.Min(a.x, b.x), Math.Min(a.y, b.y));
