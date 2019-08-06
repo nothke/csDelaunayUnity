@@ -413,6 +413,9 @@ namespace csDelaunay
         {
             if (!Clipped) return;
 
+            // Prevents non existant vertices, but unsure why, the edge is clipped?
+            if (LeftVertex == null || RightVertex == null) return;
+
             ClippedEnds[0] = LeftVertex.Coord;
             ClippedEnds[1] = RightVertex.Coord;
         }
